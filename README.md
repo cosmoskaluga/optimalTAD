@@ -1,4 +1,4 @@
-# OptimizationScript
+# optimalTAD
 
 ## Run
 ```bash
