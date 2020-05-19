@@ -40,25 +40,25 @@ def fsigmoid(x, a, b, c, d):
 if __name__ == "__main__":
     dirName = sys.argv[1]
     repetition = sys.argv[2]
-    chip_seq_filename = "depl_chipseq.merged.binned"
+    chip_seq_filename = "depl_chipseq.merged.binned_short"
     
     ####CHIP-SEQ DATA####
     chrs_drop = ['chr2LHet', 'chr2RHet', 'chr3LHet','chr3RHet','chr4', 'chrU','chrUextra','chrXHet','chrYHet']
+    #chrs_drop = ['chr2L', 'chr2R', 'chr3L', 'chr3R', 'chr2LHet', 'chr2RHet', 'chr3LHet', 'chr3RHet', 'chr4', 'chrU', 'chrUextra', 'chrXHet', 'chrYHet']
 
-    chip_names = ['1','2', '5','9','6','10']
-
-    index = np.arange(1, 13)
-    index = [str(i) for i in index]
-
-    chip_data = pd.read_csv('./ChIP_Seq/' + chip_seq_filename, header = None, sep = '\t')
-    chip_data.columns = index
-    chip_data = chip_data[chip_names]
+    #chip_names = ['1','2', '5','9','6','10']
+    #index = np.arange(1, 13)
+    #index = [str(i) for i in index]
+    
+    chip_data = pd.read_csv('./ChIP_Seq/' + chip_seq_filename, sep = '\t')
+    #chip_data.columns = index
+    #chip_data = chip_data[chip_names]
 
     for chrs in chrs_drop:
-        chip_data = chip_data.loc[chip_data['1'] != chrs]
+        chip_data = chip_data.loc[chip_data['Chr'] != chrs]
 
     chip_data.index = range(len(chip_data))
-    chip_data.columns = ['Chr', 'Bp', 'Ch1lacz', 'Ch5lacz', 'Ch4tsa', 'Ch8tsa']
+    #chip_data.columns = ['Chr', 'Bp', 'Ch1lacz', 'Ch5lacz', 'Ch4tsa', 'Ch8tsa']
     repetition_norm = stats.zscore(chip_data[[repetition]].values)
 
 
@@ -117,6 +117,7 @@ if __name__ == "__main__":
         #x_pred, y_pred, weigts = loess_1d(kb_list*20, np.array(z), frac=0.55)
         #plt.plot(kb_list*20, y_pred, linewidth = 2.8)
     
+        """
         popt, pcov = curve_fit(fsigmoid, kb_list*20, np.array(z), bounds=([0, 0,  0, -1], [3, 10, 3, 1]),  method='dogbox')
         a = popt[0]
         b = popt[1]
@@ -140,18 +141,16 @@ if __name__ == "__main__":
         plt.axis([-85, 85, -1.6, 1.6])
         plt.legend()
         plt.savefig('./Output/Pictures/' + dist_filename[26:-5] + '.png', pad_inches = 0.1, dpi = 130)
+        """
         
-        #stair_height = max(z[0:3]) - min(z[7:10])
-        #stair_height = np.mean(z[0:3]) - np.mean(z[7:10])
-        #print(dist_filename + '\t' + str(stair_height))
-        #f.write(dist_filename + '\t' + str(stair_height) + '\n')
-
         height_median = np.median(z_interTAD) - np.median(z_TAD)
         height_mean = np.mean(z_interTAD) - np.mean(z_TAD)
 
-        output_gamma = dist_filename[-10:-5]
+        output_gamma = dist_filename[-11:-5]
         if output_gamma[0].isdigit() == False:
-            output_gamma = output_gamma[2:]
+            output_gamma = output_gamma[1:]
+            if output_gamma[0].isdigit() == False:
+                output_gamma = output_gamma[2:]
 
         ind = 0
         while ind != -1:
@@ -159,6 +158,10 @@ if __name__ == "__main__":
             if ind != -1:
                 output_gamma = output_gamma[:ind] + output_gamma[ind+1:]
 
+        a = str(0)
+        b = str(0)
+        c = str(0)
+        d = str(0)
         f.write(output_gamma + '\t' + str(height_median) + '\t' + str(height_mean) + '\t' + a + '\t' + b + '\t' + c + '\t' + d + '\n')
     f.close()
 

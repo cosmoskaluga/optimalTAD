@@ -4,55 +4,98 @@ time=$(date +%s)
 GREEN='\033[0;32m'
 WHITE='\033[1;37m'
 NC='\033[0m'
-echo -e "${GREEN}TAD optimal size caller (2019)${NC}"
+echo -e "${GREEN}TAD optimal size caller (version 0.1)${NC}"
 echo " "
 
+usage() { echo "Usage: $0 [-c <armatus|matreshka>] [-p <cores>] [-r <resolution>] [-s <stepsize>]" 1>&2; exit 1; }
+
+while getopts ":c:p:r:s:h" o; do
+    case "${o}" in
+        c)
+            caller=${OPTARG}
+            if [ $caller != "armatus" ] && [ $caller != "matreshka" ]; then
+                usage
+            fi
+            ;;
+        p)
+            np=${OPTARG}
+            ;;
+        r)
+            resolution=${OPTARG}
+            ;;
+        s)
+            stepsize=${OPTARG}
+            ;;
+        h)
+            echo "Usage:"
+            echo "      -c | name of caller (armatus or matreshka)"
+            echo "      -p | number of CPU"
+            echo "      -r | resolution (armatus parameter)"
+            echo "      -s | stepsize (armatus parameter)"
+            exit 1;
+            ;;
+        *)
+            echo "No reasonable options found!"
+            usage
+            ;;
+    esac
+done
 
 #0. Cleaning old files
 echo -e "${WHITE}0. Remove old files${NC}"
-#rm -r Output/HiCmaps/*
-rm -r Output/TADs/*
-rm -r Output/NumeratedBorders/*
-rm -r Output/Score/*
-rm -r Output/Pictures/*
+rm -rf Output/HiCmaps/* || true
+rm -rf Output/TADs/* || true
+rm -rf Output/NumeratedBorders/* || true
+rm -rf Output/Score/* || true
+rm -rf Output/Pictures/* || true
 echo "     Done!"
 echo " "
+
 
 #1. Matrix extraction
 echo -e "${WHITE}1. Start to prosess raw HiC map${NC}"
-#python3.5 PyScripts/matrices_extraction.py True True
+python3 PyScripts/matrices_extraction.py True True
 echo "     Done!"
 echo " "
 
+
 #2. Armatus calling
-echo -e "${WHITE}2. TADs calling${NC}"
-for fn in Output/HiCmaps/*
+echo -e "${WHITE}2. TAD calling${NC}"
+for path_to_folder in Output/HiCmaps/*
 do
-    echo "     ${fn:15}"
-    mkdir Output/TADs/${fn:15}
-    for name in Output/HiCmaps/${fn:15}/*
+    foldername=${path_to_folder##*/}
+    echo "     ${foldername}"
+    mkdir Output/TADs/${foldername}
+    for name in Output/HiCmaps/${foldername}/*
     do
-        mydir=$(basename $name)
+        output_dir=$(basename $name)
 
-        if [ "$3" == "armatus" ]; then
-            mpiexec -np $1 ./ArmatusParallel/src/armatus -r $2 -i $name -g 4.0 -o Output/TADs/${fn:15}/${mydir%%.*} -m -s 0.2
+        if [ "$caller" = "armatus" ]; then
+            gamma_max=4.0
+            path_to_armatus="ArmatusParallel/src/armatus"
+            path_to_output="Output/TADs/${foldername}/${output_dir%%.*}"
+
+            mpiexec -np $np ./${path_to_armatus} -r $resolution \
+                                                    -i $name \
+                                                    -g $gamma_max \
+                                                    -o $path_to_output \
+                                                    -s $stepsize \
+                                                    -m
         else
-            python3.5 PyScripts/lavaburst_calling.py $name Output/TADs/${fn:15}/${mydir%%.*} $2
+            python3 PyScripts/lavaburst_calling.py $name Output/TADs/${foldername}/${output_dir%%.*} ${resolution}
         fi
-
     done
 done
 echo "     Done!"
 echo " "
 
 
-
 #3. TADs numeration
 echo -e "${WHITE}3. TADs numeration${NC}"
-for fn in Output/TADs/*
+for filename in Output/TADs/*
 do
-    echo "     ${fn:12}"
-    python3.5 PyScripts/numeration.py $fn
+    echo "     ${filename##*/}"
+    python3 PyScripts/numeration.py $filename
 done
 echo "     Done!"
 echo " "
@@ -76,7 +119,7 @@ len=${#samples[*]}
 for (( item = 0; item < len; item++ ))
 do
     echo "     ${samples[$item]}"
-    python3.5 PyScripts/stair_calling.py ${samples[$item]} ${repet[$item]}
+    python3 PyScripts/stair_calling.py ${samples[$item]} ${repet[$item]}
 done
 
 echo "     Done!"
@@ -84,7 +127,7 @@ echo " "
 
 #5. Best gamma Identification and Visualization
 echo -e "${WHITE}5. Best gamma identification ${NC}"
-python3.5 PyScripts/visualization.py
+python3 PyScripts/visualization.py
 echo "     Done!"
 echo " "
 

@@ -14,7 +14,7 @@ if __name__ == "__main__":
     A = np.loadtxt(input_file)
     
     for gamma in np.arange(0., 1.2, 0.1):
-        S = lb.scoring.modularity_score(A, gamma = gamma)
+        S = lb.scoring.armatus_score(A, gamma = gamma)
         model = lb.SegModel(S)
     
         segments = model.optimal_segmentation()

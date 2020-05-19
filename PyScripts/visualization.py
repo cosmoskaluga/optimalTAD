@@ -42,17 +42,17 @@ def best_gamma(folder_names):
     
         slope_cutoff = 0.05
 
-        slope_factors = out[['a']].values
+        #slope_factors = out[['a']].values
         gamma_values = out[['Gamma']].values
-        factor = slope_factors[0][0]
+        #factor = slope_factors[0][0]
         c = 0
 
-        while factor < slope_cutoff:
-            if c == len(slope_factors):
-                break
-            else:
-                c+=1
-                factor = slope_factors[c][0]
+        #while factor < slope_cutoff:
+        #    if c == len(slope_factors):
+        #        break
+        #    else:
+        #        c+=1
+        #        factor = slope_factors[c][0]
 
         gamma_best = gamma_values[c][0]
         print('     Best gamma for ' + folder[15:] + ' is '+ str(gamma_best))
