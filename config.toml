@@ -1,0 +1,15 @@
+# Keys
+title = «Configuration file»
+
+# Project
+[project]
+name: «optimalTAD»
+description: "Topologically Associating Domain optimal set prediction using Armatus software."
+version: "0.0.1"
+author = "Khrameeva Lab"
+
+
+# File paths
+[Paths]
+path_to_hic = ""
+path_to_chip_seq = "~/"
