@@ -1,4 +1,0 @@
-Control_1.hdf5 Ch1lacz 
-Control_2.hdf5 Ch5lacz 
-TSA_21_original.hdf5 Ch4tsa
-TSA_22_original.hdf5 Ch8tsa
