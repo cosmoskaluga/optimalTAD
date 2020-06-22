@@ -16,9 +16,16 @@ cd optimalTAD
 ```
 ### Usage
 ```bash
-./run.sh np res caller
+python3 -m optimalTAD [--hic HIC] [--chipseq CHIPSEQ] [--np NP] [--resolution RESOLUTION] [--stepsize STEPSIZE] [--gamma_max GAMMA_MAX] [--hic_format HIC_FORMAT]
 ```
-The command line arguments: 
-- np: number of CPUs (for Armatus only),
-- res: resolution,
-- caller: armatus, lavaburst
+Optional arguments:
+
+    -h, --help            show this help message and exit
+    --hic HIC
+    --chipseq CHIPSEQ
+    --np NP
+    --resolution RESOLUTION
+    --stepsize STEPSIZE
+    --gamma_max GAMMA_MAX
+    --hic_format HIC_FORMAT
+
