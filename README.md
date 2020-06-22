@@ -1,5 +1,5 @@
 # optimalTAD
-This repository is by Dmitrii Smirnov, Ekaterina Khrameeva and contains the source code of the algorithm of finding the optimal set of Topologically Associating Domains via [Armatus](https://github.com/kingsfordgroup/armatus) software.
+This repository is by Dmitrii Smirnov and Ekaterina Khrameeva and contains the source code of the algorithm of finding the optimal set of Topologically Associating Domains via [Armatus](https://github.com/kingsfordgroup/armatus) software.
 
 ## Getting Started
 
