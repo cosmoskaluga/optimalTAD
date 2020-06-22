@@ -13,6 +13,7 @@ Clone this repo:
 ``` bash
 git clone https://github.com/cosmoskaluga/optimalTAD
 cd optimalTAD
+pip install .
 ```
 ### Usage
 ```bash
