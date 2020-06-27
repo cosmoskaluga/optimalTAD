@@ -34,7 +34,8 @@ def main():
             chr_length.append(map.shape[0])
 
         ind = tadnumeration.Indexing(list(hic_data.keys()), args.resolution, np.array(chr_length), samplename.split(".")[0], args.gamma_max, args.stepsize).get_indexes()
-        
+
+
 
 
     

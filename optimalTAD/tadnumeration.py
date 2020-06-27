@@ -72,28 +72,31 @@ class Distances:
 
 class Indexing:
     def __init__(self, chrs, resolution, chr_length, samplename, gamma_max, stepsize):
-        self.chrs = chrs
+        self.chr_labels = chrs
         self.resolution = resolution
         self.chr_length = chr_length * self.resolution
         self.input_path = 'output/tads/' + samplename
         self.output_path = 'output/borders/'
         self.distances = Distances(resolution)
-        self.__tad_files = TAD_files(self.input_path, self.chrs, gamma_max, stepsize).get_files()
+        self.__tad_files = TAD_files(self.input_path, self.chr_labels, gamma_max, stepsize).get_files()
     
     def get_indexes(self):
         dict_md = {key: [] for key in self.__tad_files.keys()}
         for gamma in self.__tad_files.keys():
             df = pd.DataFrame()
-            for path, length, chromosome in zip(self.__tad_files[gamma], self.chr_length, self.chrs):
+            lbl_total = self.chr_labels
+            for path, length, label in zip(self.__tad_files[gamma], self.chr_length, self.chr_labels):
                 data = pd.read_csv(path, header = None, names = ['Chr', 'start', 'end'], sep = '\t')
                 if data.empty == True:
-                    print('There are no TADs for {} chromosome, skipping'.format(chromosome))
+                    lbl_total = np.delete(lbl_total, label)
+                    print('There are no TADs for {} chromosome, skipping'.format(label))
                 else:
                     data = data[::-1]
-                    markdown = self.distances.get_distances(data.values, length, chromosome)
+                    markdown = self.distances.get_distances(data.values, length, label)
                     df_chr = pd.DataFrame(markdown)
                     df = pd.concat([df, df_chr])
             dict_md[gamma].append(df.values)
+            dict_md[gamma].append(lbl_total)
         return dict_md
 
 
