@@ -65,7 +65,7 @@ class Distances:
             first_col, second_col = self.columns(first_col, second_col, bp, end, 'intertad')
         
         labels = np.repeat([chromosome], len(first_col))
-        out = np.vstack((labels, first_col, second_col))
+        out = np.vstack((labels, first_col.astype(int), second_col.astype(int)))
         return np.transpose(out)
 
 
@@ -89,7 +89,7 @@ class Indexing:
                 data = pd.read_csv(path, header = None, names = ['Chr', 'start', 'end'], sep = '\t')
                 if data.empty == True:
                     lbl_total = np.delete(lbl_total, label)
-                    print('There are no TADs for {} chromosome, skipping'.format(label))
+                    print('     There are no TADs for {} chromosome, skipping'.format(label))
                 else:
                     data = data[::-1]
                     markdown = self.distances.get_distances(data.values, length, label)
