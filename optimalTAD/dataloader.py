@@ -4,25 +4,19 @@ import h5py
 import os
 import glob
 
+def load_hic(path):
+    path = os.path.expanduser(path)
+    matrices = {}
+    f = h5py.File(path, 'r')
+    labels = f['chromosomeLabels'][()].astype('<U2')
+    for item in labels:
+        matrices[item] = f[item][()]
+    return matrices
 
-class Hic:
-    def __init__(self, path):
-        self.path = os.path.expanduser(path)
-    
-    def load_data(self):
-        matrices = {}
-        f = h5py.File(self.path, 'r')
-        labels = f['chromosomeLabels'][()].astype('<U2')
-        for item in labels:
-            matrices[item] = f[item][()]
-        return matrices
+def load_chipseq(path):
+    chip_data = pd.read_csv(path, sep = '\t')
+    return chip_data
 
 
-class ChIP_Seq:
-    def __init__(self, path):
-        self.path = path
-    def get_data(self):
-        chip_data = pd.read_csv(self.path, sep = '\t')
-        return chip_data
 
 

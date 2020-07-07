@@ -3,6 +3,7 @@ import numpy as np
 import pandas as pd
 from pylab import rcParams
 import matplotlib.pyplot as plt
+import seaborn as sns
 from matplotlib.ticker import ScalarFormatter,AutoMinorLocator
 
 
@@ -15,21 +16,27 @@ def stylize_axes(ax):
     ax.tick_params(axis='both', which='major', labelsize=15)
 
 
-def plotAmplitude(data, samplename = None, output_path = None, dpi = None):
-    x_val = list(data.keys())
-    y_val = list(data.values())
-    fig, ax = plt.subplots(figsize=(12, 7))
-    ax.plot(x_val, y_val, linewidth = 2.5, ls='--', marker='o',  label = samplename)
+def plotAmplitude(data, output_path = None, dpi = 200):
+    sns.set_palette(sns.color_palette("Set1"))
+    samples = data.columns[1:]
+    x_val = data.Gamma
+    
+    fig, ax = plt.subplots(figsize=(9, 7))
+    for sample in samples:
+        y_val = data[sample].values
+        ax.plot(x_val, y_val, linewidth = 2.5, ls='--', marker='o', label = sample)
+
     ax.set_xlabel('Gamma', fontsize = 20)
     ax.set_ylabel('Amplitude', fontsize = 20)
+    ax.legend(frameon=False, fontsize = 12)
     stylize_axes(ax)
-    ax.legend(frameon=False, loc='upper right', fontsize = 12)
+    ax.grid(linestyle=':', linewidth='0.3', color='black')
     
     plt.show()
     
     if output_path:
         path = os.path.dirname(output_path)
-        if not os.path.exists(path):
+        if not os.path.exists(path) and path != '':
             os.makedirs(path, exist_ok=True)
         ax.figure.savefig(output_path, dpi=dpi, bbox_inches='tight')
 
