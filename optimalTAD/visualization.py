@@ -4,7 +4,7 @@ import pandas as pd
 from pylab import rcParams
 import matplotlib.pyplot as plt
 import seaborn as sns
-from matplotlib.ticker import ScalarFormatter,AutoMinorLocator
+from matplotlib.ticker import ScalarFormatter, AutoMinorLocator
 
 
 def stylize_axes(ax):
@@ -32,7 +32,7 @@ def plotAmplitude(data, output_path = None, dpi = 200):
     stylize_axes(ax)
     ax.grid(linestyle=':', linewidth='0.3', color='black')
     
-    plt.show()
+    #plt.show()
     
     if output_path:
         path = os.path.dirname(output_path)

@@ -63,7 +63,7 @@ def get_distances(data, length, chromosome, resolution):
 
 
 
-def tadnumeration(chr_labels, resolution, chr_length, samplename, gamma_max, stepsize):
+def get_numeration(chr_labels, resolution, chr_length, samplename, gamma_max, stepsize):
     chr_length = chr_length * resolution
     input_path = 'output/tads/' + samplename
     output_path = 'output/borders/'
@@ -77,7 +77,7 @@ def tadnumeration(chr_labels, resolution, chr_length, samplename, gamma_max, ste
             data = pd.read_csv(path, header = None, names = ['Chr', 'start', 'end'], sep = '\t')
             if data.empty == True:
                 lbl_total = np.delete(lbl_total, label)
-                print('     There are no TADs for {} chromosome, skipping'.format(label))
+                #print('     There are no TADs for {} chromosome, skipping'.format(label))
             else:
                 data = data[::-1]
                 markdown = get_distances(data.values, length, label, resolution)

@@ -5,7 +5,7 @@ import numpy as np
 
 def armatus(np, resolution, path_to_data, gamma_max, stepsize, output, chromosome):
     path_to_output = os.path.join(output, "armatus")
-    path_to_armatus = './include/ArmatusParallel/src/armatus'
+    path_to_armatus = './armatus/src/armatus'
     os.system("mpiexec -np {} {} -r {} -i {} -g {} -o {} -s {} -m -c {}".format(str(np),
                                                                                 path_to_armatus,
                                                                                 str(resolution),

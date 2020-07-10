@@ -13,15 +13,20 @@ setup(name='optimalTAD',
       entry_points={'console_scripts': ['optimalTAD = optimalTAD.__main__:main']},
       license='MIT',
       packages=find_packages(),
+      include_package_data=True,
       zip_safe=False,
       platforms='any',
-      include_package_data=True,
       install_requires=['numpy>=1.16.2',
                         'scipy>=1.2.1',
-                        'h5py>=2.9.0'],
+                        'pandas>=1.0.3',
+                        'h5py>=2.9.0',
+                        'seaborn>=0.10.0'],
       classifiers=[
                    'Development Status :: 3 - Alpha',
                    'License :: OSI Approved :: MIT License',
-                   'Programming Language :: Python :: 3.8'
-                   ]
+                   'Programming Language :: Python :: 3.4',
+                   'Programming Language :: Python :: 3.5',
+                   'Programming Language :: Python :: 3.6',
+                   'Programming Language :: Python :: 3.7',
+                   'Programming Language :: Python :: 3.8']
       )

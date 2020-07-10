@@ -4,7 +4,7 @@ import numpy as np
 import pandas as pd
 
 
-def get_stair(index_data, chip, samplename):
+def get_stairs(index_data, chip, samplename):
     kb_list = np.arange(-4, 4, 1)
     acetyl_max = 5
     acetyl_min = -3
