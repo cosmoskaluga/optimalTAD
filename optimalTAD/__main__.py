@@ -1,7 +1,7 @@
 import argparse
 import logging
 import glob
-from tqdm import tqdm
+import shutil
 import io
 import sys
 import os
@@ -70,18 +70,24 @@ def main():
             chr_length.append(map.shape[0])
         
         log.info("Calculating indexes")
-        ind = tadnumeration.get_numeration(list(hic_data.keys()), args.resolution, np.array(chr_length), samplename, args.gamma_max, args.stepsize)
+        ind, tads = tadnumeration.get_numeration(list(hic_data.keys()), args.resolution, np.array(chr_length), samplename, args.gamma_max, args.stepsize)
         
         log.info("Calculating stair amplitude")
         chip_short = chip_data[['Chr', 'Bin', samplename]]
         out = staircaller.get_stairs(ind, chip_short, samplename)
         
         df_sample = pd.DataFrame(out.items(), columns = ['Gamma', samplename])
+        gamma_best = utils.optimal_gamma(df_sample)
+        log.info("The optimal gamma for {} is {}".format(samplename, gamma_best))
+        
+        #tad_list = tads[gamma_best]
+        #for i in tad_list:
+        #    shutil.copy2(i, 'output/newname.ext')
+        
         df = pd.merge(df, df_sample, on = "Gamma", how='outer', left_index=True)
         log.info("Done!")
 
     print('')
-    utils.optimal_gamma(df)
     visualization.plotAmplitude(df, output_path = "output/figures/StairAmplitude.png", dpi = 300)
 
 

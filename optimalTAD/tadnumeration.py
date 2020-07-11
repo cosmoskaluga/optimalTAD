@@ -85,7 +85,7 @@ def get_numeration(chr_labels, resolution, chr_length, samplename, gamma_max, st
                 df = pd.concat([df, df_chr])
         dict_md[gamma].append(df.values)
         dict_md[gamma].append(lbl_total)
-    return dict_md
+    return dict_md, tad_files
 
 
 

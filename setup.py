@@ -4,7 +4,7 @@ with open("README.md", "r") as fh:
     long_description = fh.read()
 
 setup(name='optimalTAD',
-      version='0.1',
+      version='0.1.0',
       url='https://github.com/cosmoskaluga/optimalTAD',
       author='Khrameeva Lab',
       author_email='dmitrii.smirnov@phystech.edu',

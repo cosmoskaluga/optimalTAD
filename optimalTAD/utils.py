@@ -10,8 +10,8 @@ def optimal_gamma(data):
     samples = data.columns[1:]
     gamma = data.Gamma
     for sample in samples:
-        index = data[sample].idxmax()
-        log.info("The optimal gamma for {} is {}".format(sample, round(gamma[index],2)))
+        maxindex = data[sample].idxmax()
+    return round(gamma[maxindex], 2)
 
 
 def progressbar (iteration, total):
