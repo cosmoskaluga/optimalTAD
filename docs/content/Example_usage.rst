@@ -1,0 +1,5 @@
+Example usage
+=============
+
+.. contents::
+:local:
