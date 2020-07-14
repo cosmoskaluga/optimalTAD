@@ -76,7 +76,8 @@ def get_numeration(chr_labels, resolution, chr_length, samplename, gamma_max, st
         for path, length, label in zip(tad_files[gamma], chr_length, chr_labels):
             data = pd.read_csv(path, header = None, names = ['Chr', 'start', 'end'], sep = '\t')
             if data.empty == True:
-                lbl_total = np.delete(lbl_total, label)
+                index = np.argwhere(lbl_total == label)
+                lbl_total = np.delete(lbl_total, index)
                 #print('     There are no TADs for {} chromosome, skipping'.format(label))
             else:
                 data = data[::-1]
