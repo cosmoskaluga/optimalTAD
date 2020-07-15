@@ -2,6 +2,7 @@ import numpy as np
 import pandas as pd
 import h5py
 import os
+import sys
 import glob
 import logging
 
@@ -35,7 +36,8 @@ def get_bigwig_file(self):
     import pyBigWig
     bw = pyBigWig.open(self.path)
     if bw.isBigWig() == False:
-        log.error('Not a .bigwig file!')
+        log.error('Incompatible format of ChIP-seq file!')
+        sys.exit(1)
 
     df_chip = pd.DataFrame([])
     for ch in bw.chroms().keys():
@@ -57,7 +59,8 @@ class ChipSeq:
         
         accepted_extensions = bedgraph_extensions + bigwig_extensions
         if self.extension not in accepted_extensions:
-            print(ERROR)
+            log.error('Incompatible format of ChIP-seq file!')
+            sys.exit(1)
 
     def __call__(self):
         if self.extension in bedgraph_extensions:

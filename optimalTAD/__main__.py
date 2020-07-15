@@ -18,14 +18,14 @@ from . import utils
 from . import visualization
 
 def get_parser():
-    parser = argparse.ArgumentParser(description='optimalTAD: Topologically Associating Domain optimal set prediction')
-    parser.add_argument('--hic', type = str, help='Iteratively corrected Hi-C data')
-    parser.add_argument('--chipseq', type = str, help='ChIP-seq data')
-    parser.add_argument('--np', type = int, default = 1, help='Number of processors')
-    parser.add_argument('--resolution', type = int, default = 1, help='Resolution of Hi-C matrices')
-    parser.add_argument('--stepsize', type = float, default = 0.5, help='Step size to increment gamma parameter')
-    parser.add_argument('--gamma_max', type = float, default = 4, help='Max gamma parameter')
-    parser.add_argument('--hic_format', type = str, default = 'txt.gz', help='Hi-C matrices input format for armatus')
+    parser = argparse.ArgumentParser(description = 'optimalTAD: Topologically Associating Domain optimal set prediction')
+    parser.add_argument('--hic', type = str, nargs='+', help = 'Iteratively corrected Hi-C data')
+    parser.add_argument('--chipseq', type = str, nargs = '+', help = 'ChIP-seq data')
+    parser.add_argument('--np', type = int, default = 1, help = 'Number of processors')
+    parser.add_argument('--resolution', type = int, default = 1, help = 'Resolution of Hi-C matrices')
+    parser.add_argument('--stepsize', type = float, default = 0.5, help = 'Step size to increment gamma parameter')
+    parser.add_argument('--gamma_max', type = float, default = 4, help = 'Max gamma parameter')
+    parser.add_argument('--hic_format', type = str, default = 'txt.gz', help = 'Hi-C matrices input format for armatus')
     return parser
 
 
@@ -37,7 +37,7 @@ def run_armatus(args, data, samplename, log):
     num = 0
     for chromosome in data.keys():
         utils.progressbar(num, len(data.keys()))
-        path_to_file = os.path.join(path_to_hic, chromosome + "." + args.hic_format)
+        path_to_file = os.path.join(path_to_hic, chromosome + '.' + args.hic_format)
         submap = data[chromosome]
         np.savetxt(path_to_file, submap, delimiter = '\t', fmt = '%.2f')
         armatus_output = utils.check_path(path, 'tads/' + samplename, chromosome)
@@ -53,12 +53,12 @@ def main():
     log = logger.initialize_logger()
     df = pd.DataFrame(columns = ['Gamma'])
     
-    for hic_path, chipseq_path in zip(glob.glob(args.hic + '*.hdf5'), glob.glob(args.chipseq + '*.bedgraph')):
+    for hic_path, chipseq_path in zip(args.hic, args.chipseq):
         samplename = os.path.split(hic_path)[1].split('.')[0]
         log.info('\033[1m' + 'Filename: ' + samplename + '\033[0m')
         
         log.info('Loading Hi-C data')
-        hic_data = hicloader.load_hic(hic_path)# load HiC map
+        hic_data = hicloader.load_hic(hic_path) # load HiC map
         
         log.info('Loading ChIP-seq data')
         ChipSeqLoader = chipseqloader.ChipSeq(chipseq_path)

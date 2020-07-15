@@ -15,13 +15,13 @@ def optimal_gamma(data):
 
 
 def progressbar (iteration, total):
-    prefix = " "*21
-    suffix = "complete"
+    prefix = ' '*21
+    suffix = 'complete'
     length = 47
     decimals = 1
     fill = '█'
     
-    percent = ("{0:." + str(decimals) + "f}").format(100 * (iteration / float(total)))
+    percent = ('{0:.' + str(decimals) + 'f}').format(100 * (iteration / float(total)))
     filledLength = int(length * iteration // total)
     bar = fill * filledLength + '-' * (length - filledLength)
     print('\r%s |%s| %s%% %s' % (prefix, bar, percent, suffix), end = '\r')
@@ -29,10 +29,10 @@ def progressbar (iteration, total):
         print()
 
 def check_path(path, folder_name, name = None):
-    dirName = os.path.join(path, folder_name, name + "/")
+    dirName = os.path.join(path, folder_name, name + '/')
     if not os.path.exists(dirName):
         os.makedirs(dirName, exist_ok=True)
     else:
-        for old_file in glob.glob(os.path.join(dirName, "*")):
+        for old_file in glob.glob(os.path.join(dirName, '*')):
             os.remove(old_file)
     return dirName

@@ -17,7 +17,7 @@ def stylize_axes(ax):
 
 
 def plotAmplitude(data, output_path = None, dpi = 200):
-    sns.set_palette(sns.color_palette("Set1"))
+    sns.set_palette(sns.color_palette('Set1'))
     samples = data.columns[1:]
     x_val = data.Gamma
     

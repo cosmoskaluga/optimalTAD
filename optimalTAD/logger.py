@@ -3,12 +3,12 @@ import sys
 import os
 
 def initialize_logger():
-    filemode = "w"
-    logger_name = "optimalTAD"
-    format = "%(name)-5s: %(levelname)-10s %(message)s"
-    filename = "optad.log"
+    filemode = 'w'
+    logger_name = 'optimalTAD'
+    format = '%(name)-5s: %(levelname)-10s %(message)s'
+    filename = 'optad.log'
 
-    dirname = os.path.join(sys.path[0], "log")
+    dirname = os.path.join(sys.path[0], 'log')
     if not os.path.exists(dirname):
         os.makedirs(dirname, exist_ok=True)
     
