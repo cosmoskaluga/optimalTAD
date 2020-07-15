@@ -43,19 +43,15 @@ def columns(first_col, second_col, start, end, resolution, interaction_type = 't
 
 
 def get_distances(data, length, chromosome, resolution):
-    bp = 0
     first_col = np.array([])
     second_col = np.array([])
+    bp = data[0][1]
     for row in data:
-        start, end = row[1], row[2] + 1
-        if bp != start:
-            first_col, second_col = columns(first_col, second_col, bp, start, resolution, 'intertad')
-        first_col, second_col = columns(first_col, second_col, start, end, resolution, 'tad')
-        bp = end
-        
-    if (length > bp):
-        start, end = bp, length
-        first_col, second_col = columns(first_col, second_col, bp, end, resolution, 'intertad')
+        start_bin, end_bin = row[1], row[2] + 1
+        if bp != start_bin:
+            first_col, second_col = columns(first_col, second_col, bp, start_bin, resolution, 'intertad')
+        first_col, second_col = columns(first_col, second_col, start_bin, end_bin, resolution, 'tad')
+        bp = end_bin
         
     labels = np.repeat([chromosome], len(first_col))
     out = np.vstack((labels, first_col.astype(int), second_col.astype(int)))
