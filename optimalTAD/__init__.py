@@ -2,7 +2,7 @@
 Required .py scripts
 """
 
-from . hicloader import load_hic
+from . hicloader import *
 from . chipseqloader import *
 from . tadcaller import armatus
 from . tadnumeration import get_numeration
