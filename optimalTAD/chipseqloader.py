@@ -50,6 +50,9 @@ def get_bigwig_file(self):
         else:
             df_chip = pd.concat([df_chip, df_chr])
 
+        convert_dict = {'Chr': str, 'Start': int, 'End': int, 'Score': float}
+        df_chip = df_chip.astype(convert_dict)
+
     return df_chip
 
 class ChipSeq:

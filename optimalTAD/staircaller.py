@@ -8,9 +8,11 @@ def get_stairs(index_data, chipseq_data):
     kb_list = np.arange(-4, 4, 1)
     acetyl_max = 5
     acetyl_min = -3
-    dict_stairs = {key: None for key in index_data.keys()}
+    gamma_range = index_data.keys()
+    dict_amplitudes = {key: None for key in gamma_range}
+    dict_stairs = {key: None for key in gamma_range}
         
-    for gamma in index_data.keys():
+    for gamma in gamma_range:
         dist_data = pd.DataFrame(index_data[gamma][0], columns = ['Chr', 'Bp', 'Index'])
         chromosomes = index_data[gamma][1]
             
@@ -36,10 +38,10 @@ def get_stairs(index_data, chipseq_data):
                     if index >= 1:
                         TAD = np.append(TAD, acetyl_val)
         
-            amplitude = np.median(interTAD) - np.median(TAD)
-            dict_stairs[gamma] = amplitude
+        amplitude = np.median(interTAD) - np.median(TAD)
+        dict_amplitudes[gamma] = amplitude
         
-    return dict_stairs
+    return dict_amplitudes
 
 
 
