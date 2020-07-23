@@ -35,26 +35,41 @@ def numeration(size, interaction_type = 'tad'):
 def columns(first_col, second_col, start, end, resolution, interaction_type = 'tad'):
     size = (end-start)/resolution
     col1 = np.arange(start, end, resolution)
-    col2 = numeration(int(size), interaction_type)
+    
+    if interaction_type != 'skip':
+        col2 = numeration(int(size), interaction_type).astype(str)
+    else:
+        col2 = np.repeat(np.nan, size)
+
     first_col = np.append(first_col, col1)
     second_col = np.append(second_col, col2)
-    return first_col, second_col
+    return first_col, second_col.astype(str)
 
 
 
 def get_distances(data, length, chromosome, resolution):
     first_col = np.array([])
     second_col = np.array([])
-    bp = data[0][1]
+    
+    bp = 0
+    start_bin = int(data[0][1])
+    if start_bin != 0:
+        first_col, second_col = columns(first_col, second_col, bp, start_bin, resolution, interaction_type = 'skip')
+    bp = start_bin
+
     for row in data:
         start_bin, end_bin = row[1], row[2] + 1
         if bp != start_bin:
-            first_col, second_col = columns(first_col, second_col, bp, start_bin, resolution, 'intertad')
-        first_col, second_col = columns(first_col, second_col, start_bin, end_bin, resolution, 'tad')
+            first_col, second_col = columns(first_col, second_col, bp, start_bin, resolution, interaction_type = 'intertad')
+        first_col, second_col = columns(first_col, second_col, start_bin, end_bin, resolution, interaction_type = 'tad')
         bp = end_bin
-        
+
+    if (length > bp):
+        start, end = bp, length
+        first_col, second_col = columns(first_col, second_col, bp, end, resolution, interaction_type = 'skip')
+    
     labels = np.repeat([chromosome], len(first_col))
-    out = np.vstack((labels, first_col.astype(int), second_col.astype(int)))
+    out = np.vstack((labels, first_col.astype(int), second_col))
     return np.transpose(out)
 
 
@@ -70,7 +85,7 @@ def get_numeration(chr_labels, resolution, chr_length, samplename, gamma_max, st
         df = pd.DataFrame()
         lbl_total = chr_labels
         for path, length, label in zip(tad_files[gamma], chr_length, chr_labels):
-            data = pd.read_csv(path, header = None, names = ['Chr', 'start', 'end'], sep = '\t')
+            data = pd.read_csv(path, header = None, names = ['Chr', 'Start', 'End'], sep = '\t')
             if data.empty == True:
                 index = np.argwhere(lbl_total == label)
                 lbl_total = np.delete(lbl_total, index)

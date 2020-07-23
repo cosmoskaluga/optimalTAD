@@ -16,7 +16,7 @@ def stylize_axes(ax):
     ax.tick_params(axis='both', which='major', labelsize=15)
 
 
-def plotAmplitude(data, output_path = None, dpi = 200):
+def plotAmplitude(data, output_path = 'amplitude.png', dpi = 200):
     sns.set_palette(sns.color_palette('Set1'))
     samples = data.columns[1:]
     x_val = data.Gamma
@@ -32,8 +32,40 @@ def plotAmplitude(data, output_path = None, dpi = 200):
     stylize_axes(ax)
     ax.grid(linestyle=':', linewidth='0.3', color='black')
     
-    #plt.show()
+    if output_path:
+        path = os.path.dirname(output_path)
+        if not os.path.exists(path) and path != '':
+            os.makedirs(path, exist_ok=True)
+        ax.figure.savefig(output_path, dpi=dpi, bbox_inches='tight')
+
+    return ax
+
+
+def plotStair(dict_stair, gamma, output_path = 'stair.png', dpi = 200):
+    x_val = np.arange(-5, 5, 1)
+    y_val = dict_stair[gamma]
     
+    if np.isnan(y_val).any() == True:
+        idx = np.argwhere(np.isnan(y_val))
+        idx = np.concatenate(idx)
+        x_val = np.delete(x_val, idx)
+        y_val = np.delete(y_val, idx)
+    
+    poly = np.polyfit(x_val, y_val, 3)
+    poly_y = np.poly1d(poly)(x_val)
+    
+    sns.set_palette(sns.color_palette('Set1'))
+    
+    fig, ax = plt.subplots(figsize=(9, 7))
+
+    ax.plot(x_val, poly_y, linewidth = 2.5, ls='--', marker='o', label = "Gamma = " + str(gamma))
+    ax.set_xlabel('Distance to TAD boundary, kb', fontsize = 20)
+    ax.set_ylabel('Median z-score of acetylation values', fontsize = 20)
+    ax.grid(linestyle=':', linewidth='0.3', color='black')
+    
+    stylize_axes(ax)
+    ax.legend(frameon = False, fontsize = 12)
+
     if output_path:
         path = os.path.dirname(output_path)
         if not os.path.exists(path) and path != '':

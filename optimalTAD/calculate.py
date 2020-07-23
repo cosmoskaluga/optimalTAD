@@ -5,12 +5,12 @@ import os
 import numpy as np
 import pandas as pd
 
-from . import hicloader, chipseqloader
-from . import tadcaller
-from . import tadnumeration
-from . import staircaller
-from . import utils
-from . import visualization
+from . optimization import hicloader, chipseqloader
+from . optimization import tadcaller
+from . optimization import tadnumeration
+from . optimization import staircaller
+from . optimization import utils
+from . optimization import visualization
 
 
 def run_armatus(args, chromsize, samplename):
@@ -50,11 +50,13 @@ def main(args, log):
         ind, tads = tadnumeration.get_numeration(chrs, args.resolution, sizes, samplename, args.gamma_max, args.stepsize)
             
         log.info('Calculating stair amplitude')
-        out = staircaller.get_stairs(ind, chip_data)
+        stairs, amplitudes = staircaller.get_stairs(ind, chip_data)
             
-        df_sample = pd.DataFrame(out.items(), columns = ['Gamma', samplename])
+        df_sample = pd.DataFrame(amplitudes.items(), columns = ['Gamma', samplename])
         gamma_best = utils.optimal_gamma(df_sample)
         log.info('The optimal gamma for {} is {}'.format(samplename, gamma_best))
+        
+        visualization.plotStair(stairs, gamma_best, output_path = 'output/figures/BestStair_' + samplename + '.png', dpi = 300)
             
         df = pd.merge(df, df_sample, on = 'Gamma', how='outer', left_index=True)
         log.info('Done!')
