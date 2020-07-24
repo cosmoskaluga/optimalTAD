@@ -3,6 +3,7 @@ import logging
 import sys
 import time
 from . import calculate
+from . import plotting
 from . import logger
 
 
@@ -29,7 +30,7 @@ The basic optimalTAD commands are:
         parser.add_argument('--hic', type = str, nargs='+', help = 'Iteratively corrected Hi-C data')
         parser.add_argument('--chipseq', type = str, nargs = '+', help = 'ChIP-seq data')
         parser.add_argument('--np', type = int, default = 1, help = 'Number of processors')
-        parser.add_argument('--resolution', type = int, default = 1, help = 'Resolution of Hi-C matrices')
+        parser.add_argument('--resolution', type = int, default = 1, help = 'Resolution')
         parser.add_argument('--stepsize', type = float, default = 0.5, help = 'Step size to increment gamma parameter')
         parser.add_argument('--gamma_max', type = float, default = 4, help = 'Max gamma parameter')
         parser.add_argument('--hic_format', type = str, default = 'txt.gz', help = 'Hi-C matrices input format for armatus')
@@ -38,9 +39,16 @@ The basic optimalTAD commands are:
         self.log.info('Execution time: {} sec'.format(time.time()-start_time))
     
     def visualize(self):
+        start_time = time.time()
         parser = argparse.ArgumentParser(description='Visualize results')
+        parser.add_argument('--hic', type = str, help = 'Iteratively corrected Hi-C data')
+        parser.add_argument('--tad', type = str, help = 'Set of Topologically associated domains')
+        parser.add_argument('--region', type = str, help = 'Genome region')
+        parser.add_argument('--resolution', type = int, help = 'Resolution')
+        parser.add_argument('--chipseq', type = str, help = 'ChIP-seq data')
         args = parser.parse_args(sys.argv[2:])
-
+        plotting.main(args, self.log)
+        self.log.info('Execution time: {} sec'.format(time.time()-start_time))
 
 
     

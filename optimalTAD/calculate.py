@@ -10,7 +10,7 @@ from . optimization import tadcaller
 from . optimization import tadnumeration
 from . optimization import staircaller
 from . optimization import utils
-from . optimization import visualization
+from . optimization import plotter
 
 
 def run_armatus(args, chromsize, samplename):
@@ -48,6 +48,7 @@ def main(args, log):
             
         log.info('Calculating indexes')
         ind, tads = tadnumeration.get_numeration(chrs, args.resolution, sizes, samplename, args.gamma_max, args.stepsize)
+        print(ind.keys())
             
         log.info('Calculating stair amplitude')
         stairs, amplitudes = staircaller.get_stairs(ind, chip_data)
@@ -56,11 +57,11 @@ def main(args, log):
         gamma_best = utils.optimal_gamma(df_sample)
         log.info('The optimal gamma for {} is {}'.format(samplename, gamma_best))
         
-        visualization.plotStair(stairs, gamma_best, output_path = 'output/figures/BestStair_' + samplename + '.png', dpi = 300)
+        plotter.plotStair(stairs, gamma_best, output_path = 'output/figures/BestStair_' + samplename + '.png', dpi = 300)
             
         df = pd.merge(df, df_sample, on = 'Gamma', how='outer', left_index=True)
         log.info('Done!')
         print('')
         
-    visualization.plotAmplitude(df, output_path = 'output/figures/StairAmplitude.png', dpi = 300)
+    plotter.plotAmplitude(df, output_path = 'output/figures/StairAmplitude.png', dpi = 300)
     df.to_csv('output/amplitudes.csv', header = True, index=False)

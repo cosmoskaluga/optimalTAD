@@ -27,6 +27,7 @@ def get_bedgraph(self):
                     data = row_content
     
         df_chip = pd.DataFrame(data, columns = ['Chr', 'Start', 'End', 'Score'])
+        df_chip = df_chip.replace('NA', 'nan')
         convert_dict = {'Chr': str, 'Start': int, 'End': int, 'Score': float}
         df_chip = df_chip.astype(convert_dict)
     return df_chip
