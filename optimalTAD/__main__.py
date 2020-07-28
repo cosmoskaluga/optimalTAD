@@ -37,7 +37,15 @@ The basic optimalTAD commands are:
         parser.add_argument('--stepsize', type = float, default = 0.5, help = 'Step size to increment gamma parameter')
         parser.add_argument('--gamma_max', type = float, default = 4, help = 'Max gamma parameter')
         parser.add_argument('--hic_format', type = str, default = 'txt.gz', help = 'Hi-C matrices input format for armatus')
+        parser.add_argument('--empty_row_imputation', action='store_true', help = 'Missing rows (and columns) imputation')
+        parser.add_argument('--shrinkage',  action='store_true', help = 'Shrinkage of Hi-C-matrix')
+        parser.add_argument('--log2_transformation', action='store_true', help = 'log2 transformation')
+        parser.set_defaults(empty_row_imputation=False)
+        parser.set_defaults(shrinkage=False)
+        parser.set_defaults(log2_transformation=False)
+        
         args = parser.parse_args(sys.argv[2:])
+        
         calculate.main(args, self.cfg, self.log)
         self.log.info('Execution time: {} sec'.format(time.time()-start_time))
     

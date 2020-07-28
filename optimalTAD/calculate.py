@@ -34,7 +34,7 @@ def main(args, cfg, log):
         log.info('\033[1m' + 'Samplename: ' + samplename + '\033[0m')
             
         log.info('Loading Hi-C data')
-        HicLoader = hicloader.HiC(hic_path, samplename, args.hic_format, mcool_format = False)
+        HicLoader = hicloader.HiC(hic_path, samplename, args.hic_format, mcool_format = False, empty_row_imputation = args.empty_row_imputation, shrinkage = args.shrinkage, log2_transformation = args.log2_transformation)
         chromsize = HicLoader()
         chrs = np.array(list(chromsize.keys()), dtype = str)
         sizes = np.fromiter(chromsize.values(), dtype = int)
