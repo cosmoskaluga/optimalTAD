@@ -4,10 +4,9 @@ import numpy as np
 import pandas as pd
 
 
-def get_stairs(index_data, chip_data):
-    kb_list = np.arange(-5, 5, 1)
-    acetyl_max = 5
-    acetyl_min = -3
+def get_stairs(index_data, chip_data, index_min = -5, index_max = 5, acetyl_min = -3, acetyl_max = 5):
+    
+    kb_list = np.arange(index_min, index_max, 1)
     gamma_range = index_data.keys()
     dict_amplitudes = {key: None for key in gamma_range}
     dict_stairs = {key: None for key in gamma_range}

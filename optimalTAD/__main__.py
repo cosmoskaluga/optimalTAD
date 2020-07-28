@@ -5,11 +5,14 @@ import time
 from . import calculate
 from . import plotting
 from . import logger
-
+from . import config
 
 class optimalTAD:
     def __init__(self):
+        
         self.log = logger.initialize_logger()
+        self.cfg = config.get_configuration()
+        
         parser = argparse.ArgumentParser(description = 'optimalTAD: Topologically Associating Domain optimal set prediction', usage=''' optimalTAD <command> [<args>]
     
 The basic optimalTAD commands are:
@@ -35,7 +38,7 @@ The basic optimalTAD commands are:
         parser.add_argument('--gamma_max', type = float, default = 4, help = 'Max gamma parameter')
         parser.add_argument('--hic_format', type = str, default = 'txt.gz', help = 'Hi-C matrices input format for armatus')
         args = parser.parse_args(sys.argv[2:])
-        calculate.main(args, self.log)
+        calculate.main(args, self.cfg, self.log)
         self.log.info('Execution time: {} sec'.format(time.time()-start_time))
     
     def visualize(self):

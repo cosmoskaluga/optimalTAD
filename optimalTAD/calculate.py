@@ -26,7 +26,7 @@ def run_armatus(args, chromsize, samplename):
     utils.progressbar(num, len(chromsize.keys()))
 
 
-def main(args, log):
+def main(args, cfg, log):
     df = pd.DataFrame(columns = ['Gamma'])
     
     for hic_path, chipseq_path in zip(args.hic, args.chipseq):
@@ -48,20 +48,20 @@ def main(args, log):
             
         log.info('Calculating indexes')
         ind, tads = tadnumeration.get_numeration(chrs, args.resolution, sizes, samplename, args.gamma_max, args.stepsize)
-        print(ind.keys())
             
         log.info('Calculating stair amplitude')
-        stairs, amplitudes = staircaller.get_stairs(ind, chip_data)
+        stairs, amplitudes = staircaller.get_stairs(ind, chip_data, index_min = cfg.getint('stair', 'index_min'), index_max = cfg.getint('stair', 'index_max'), acetyl_min = cfg.getint('stair', 'acetyl_min'), acetyl_max = cfg.getint('stair', 'acetyl_max'))
             
         df_sample = pd.DataFrame(amplitudes.items(), columns = ['Gamma', samplename])
         gamma_best = utils.optimal_gamma(df_sample)
         log.info('The optimal gamma for {} is {}'.format(samplename, gamma_best))
         
-        plotter.plotStair(stairs, gamma_best, output_path = 'output/figures/BestStair_' + samplename + '.png', dpi = 300)
-            
+        plotter.plotStair(stairs, gamma_best, output_path = cfg.get('output', 'path_to_stair_figure') + samplename + '.' + cfg.get('output', 'figure_postfix'), dpi = cfg.getint('output', 'figure_dpi'))
+
         df = pd.merge(df, df_sample, on = 'Gamma', how='outer', left_index=True)
         log.info('Done!')
         print('')
         
-    plotter.plotAmplitude(df, output_path = 'output/figures/StairAmplitude.png', dpi = 300)
-    df.to_csv('output/amplitudes.csv', header = True, index=False)
+    path = cfg.get('output', 'path_to_amplitude_figure') + cfg.get('output', 'figure_postfix')
+    plotter.plotAmplitude(df, output_path = path, dpi = cfg.getint('output', 'figure_dpi'))
+    df.to_csv(cfg.get('output', 'path_to_amplitude_file'), header = True, index=False)
