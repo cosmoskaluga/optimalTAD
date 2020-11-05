@@ -9,6 +9,7 @@ def initialize_logger():
     filename = 'optad.log'
 
     dirname = os.path.join(sys.path[0], 'log')
+    print(dirname)
     if not os.path.exists(dirname):
         os.makedirs(dirname, exist_ok=True)
     

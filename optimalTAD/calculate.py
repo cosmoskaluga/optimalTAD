@@ -21,47 +21,93 @@ def run_armatus(args, chromsize, samplename):
         utils.progressbar(num, len(chromsize.keys()))
         path_to_file = os.path.join(path_to_hic, chromosome + '.' + args.hic_format)
         armatus_output = utils.check_path(path, 'tads/' + samplename, chromosome)
-        caller = tadcaller.armatus(args.np, args.resolution, path_to_file, args.gamma_max, args.stepsize, armatus_output, chromosome)
+        caller = tadcaller.armatus(args.np,
+                                   args.resolution,
+                                   path_to_file,
+                                   args.gamma_max,
+                                   args.stepsize,
+                                   armatus_output,
+                                   chromosome)
         num+=1
     utils.progressbar(num, len(chromsize.keys()))
 
 
 def main(args, cfg, log):
     df = pd.DataFrame(columns = ['Gamma'])
+    stair_dict = {}
+    best_gamma_array = []
     
     for hic_path, chipseq_path in zip(args.hic, args.chipseq):
         samplename = os.path.split(hic_path)[1].split('.')[0]
         log.info('\033[1m' + 'Samplename: ' + samplename + '\033[0m')
             
         log.info('Loading Hi-C data')
-        HicLoader = hicloader.HiC(hic_path, samplename, args.hic_format, mcool_format = False, empty_row_imputation = args.empty_row_imputation, shrinkage = args.shrinkage, log2_transformation = args.log2_transformation)
-        chromsize = HicLoader()
+        set_chromosomes = cfg.get('general', 'set_chromosomes')
+        HicLoader = hicloader.HiC(hic_path,
+                                  samplename,
+                                  args.hic_format,
+                                  args.resolution,
+                                  set_chromosomes,
+                                  balance = eval(cfg.get('hic', 'balance')))
+                                  
+        chromsize = HicLoader(args.empty_row_imputation,
+                              args.truncation,
+                              shrinkage_min = float(cfg.get('hic', 'shrinkage_min')),
+                              shrinkage_max = float(cfg.get('hic', 'shrinkage_max')),
+                              log2_hic = args.log2_hic)
+                              
         chrs = np.array(list(chromsize.keys()), dtype = str)
         sizes = np.fromiter(chromsize.values(), dtype = int)
-            
-        log.info('Loading ChIP-seq data')
+        
+        
+        log.info('Loading epigenetic data')
         ChipSeqLoader = chipseqloader.ChipSeq(chipseq_path)
-        chip_data = ChipSeqLoader()
-            
+        chip_data = ChipSeqLoader(args.log2_chip, set_chromosomes, args.zscore_chip)
+        
+        
         log.info('Running armatus in serial on all {} chromosomes:'.format(len(chrs)))
         run_armatus(args, chromsize, samplename)
-            
+        
+        
         log.info('Calculating indexes')
         ind, tads = tadnumeration.get_numeration(chrs, args.resolution, sizes, samplename, args.gamma_max, args.stepsize)
-            
-        log.info('Calculating stair amplitude')
-        stairs, amplitudes = staircaller.get_stairs(ind, chip_data, index_min = cfg.getint('stair', 'index_min'), index_max = cfg.getint('stair', 'index_max'), acetyl_min = cfg.getint('stair', 'acetyl_min'), acetyl_max = cfg.getint('stair', 'acetyl_max'))
-            
-        df_sample = pd.DataFrame(amplitudes.items(), columns = ['Gamma', samplename])
-        gamma_best = utils.optimal_gamma(df_sample)
-        log.info('The optimal gamma for {} is {}'.format(samplename, gamma_best))
         
-        plotter.plotStair(stairs, gamma_best, output_path = cfg.get('output', 'path_to_stair_figure') + samplename + '.' + cfg.get('output', 'figure_postfix'), dpi = cfg.getint('output', 'figure_dpi'))
+        
+        
+        log.info('Calculating stair amplitude')
+        stairs, amplitudes = staircaller.get_stairs(ind,
+                                                    chip_data,
+                                                    index_min = cfg.getint('stair', 'index_min'),
+                                                    index_max = cfg.getint('stair', 'index_max'),
+                                                    acetyl_min = cfg.getint('stair', 'acetyl_min'),
+                                                    acetyl_max = cfg.getint('stair', 'acetyl_max'))
+            
 
+        df_sample = pd.DataFrame(amplitudes.items(), columns = ['Gamma', samplename])
+        best_gamma = utils.optimal_gamma(df_sample)
+        log.info('The optimal gamma for {} is {}'.format(samplename, best_gamma))
+        
+        utils.select_optimal_tads(tads, best_gamma, samplename)
+        
+        stair_dict[samplename] = stairs[best_gamma]
+        best_gamma_array.append(best_gamma)
+        
+        
         df = pd.merge(df, df_sample, on = 'Gamma', how='outer', left_index=True)
         log.info('Done!')
-        print('')
-        
-    path = cfg.get('output', 'path_to_amplitude_figure') + cfg.get('output', 'figure_postfix')
+        print()
+    
+    
+    path = cfg.get('output', 'path_to_amplitude_figure') + '.' + cfg.get('output', 'figure_postfix')
     plotter.plotAmplitude(df, output_path = path, dpi = cfg.getint('output', 'figure_dpi'))
+
+
+    stair_df = pd.DataFrame(stair_dict)
+    plotter.plotStair(stair_df,
+                      best_gamma_array,
+                      index_min = cfg.getint('stair', 'index_min'),
+                      index_max = cfg.getint('stair', 'index_max'),
+                      output_path = cfg.get('output', 'path_to_stair_figure') + '.' + cfg.get('output', 'figure_postfix'),
+                      dpi = cfg.getint('output', 'figure_dpi'))
+    
     df.to_csv(cfg.get('output', 'path_to_amplitude_file'), header = True, index=False)

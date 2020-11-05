@@ -3,10 +3,10 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-==================
-optimalTAD
-==================
-optimalTAD is an algorithm developed for finding the optimal set of topologically associated domains (TADs) for given Hi-C and ChIP-Seq data.
+========================================
+Welcome to the optimalTAD documentation!
+========================================
+optimalTAD is an algorithm developed for finding the optimal set of topologically associated domains (TADs) based on a combination of Hi-C and epigenetic data.
 
 
 Contents:

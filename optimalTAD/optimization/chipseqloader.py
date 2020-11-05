@@ -7,6 +7,8 @@ import glob
 import logging
 
 from itertools import repeat
+from . import utils
+
 
 log = logging.getLogger(__name__)
 
@@ -33,6 +35,7 @@ def get_bedgraph(self):
     return df_chip
 
 
+
 def get_bigwig_file(self):
     import pyBigWig
     bw = pyBigWig.open(self.path)
@@ -56,6 +59,8 @@ def get_bigwig_file(self):
 
     return df_chip
 
+
+
 class ChipSeq:
     def __init__(self, path):
         self.path = path
@@ -66,12 +71,26 @@ class ChipSeq:
             log.error('Incompatible format of ChIP-seq file!')
             sys.exit(1)
 
-    def __call__(self):
+    def __call__(self, log2_chip, set_chromosomes, zscore_chip):
         if self.extension in bedgraph_extensions:
-            return get_bedgraph(self)
+            df_chip = get_bedgraph(self)
         else:
-            return get_bigwig_file(self)
+            df_chip = get_bigwig_file(self)
+    
+        if set_chromosomes != 'None':
+            chrnames = set_chromosomes.split(',')
+            df_chip = df_chip.loc[df_chip['Chr'].isin(chrnames)]
+        
+        if log2_chip:
+            score = df_chip.Score.values
+            bool_arr = utils.nan_array_comparison(np.less, score, 1e-10)
+            score[bool_arr] = np.nan
+            df_chip.Score = np.log2(df_chip.Score.values)
+            df_chip = df_chip.replace(np.inf, np.nan)
+        
+        if zscore_chip:
+            df_chip.Score = (df_chip.Score - df_chip.Score.mean()) / df_chip.Score.std(ddof=0)
 
-
+        return df_chip
 
 

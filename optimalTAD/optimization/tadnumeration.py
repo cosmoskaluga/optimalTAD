@@ -3,6 +3,9 @@ import pandas as pd
 import sys
 import os
 import glob
+import logging
+
+log = logging.getLogger(__name__)
 
 
 def get_tad_files(input_path, chrs, gamma_max, stepsize):
@@ -81,6 +84,7 @@ def get_numeration(chr_labels, resolution, chr_length, samplename, gamma_max, st
     tad_files = get_tad_files(input_path, chr_labels, gamma_max, stepsize)
 
     dict_md = {key: [] for key in tad_files.keys()}
+    chrs_counter = 0
     for gamma in tad_files.keys():
         df = pd.DataFrame()
         lbl_total = chr_labels
@@ -95,8 +99,14 @@ def get_numeration(chr_labels, resolution, chr_length, samplename, gamma_max, st
                 markdown = get_distances(data.values, length, label, resolution)
                 df_chr = pd.DataFrame(markdown)
                 df = pd.concat([df, df_chr])
+                chrs_counter += 1
         dict_md[gamma].append(df.values)
         dict_md[gamma].append(lbl_total)
+
+    if chrs_counter == 0:
+        log.error('There are no TADs identified across resolutions and replicates of Hi-C data!')
+        sys.exit(1)
+
     return dict_md, tad_files
 
 
