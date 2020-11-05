@@ -1,3 +1,5 @@
+[![BCH compliance](https://bettercodehub.com/edge/badge/cosmoskaluga/optimalTAD?branch=master)](https://bettercodehub.com/)
+
 # optimalTAD
 Algorithm for finding the optimal set of Topologically Associating Domains based on [Armatus](https://github.com/kingsfordgroup/armatus) software.
 
