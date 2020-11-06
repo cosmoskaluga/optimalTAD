@@ -60,3 +60,24 @@ def check_path(path, folder_name, name = None):
     return dirName
 
 
+def split_chromosome_input(region, resolution):
+    region_split = region.split(':')
+    try:
+        chromosome = region_split[0]
+        if len(region_split) == 2:
+            coordinates = region_split[1].split('-')
+            start_bin = int(coordinates[0].replace(',',''))
+            end_bin = int(coordinates[1].replace(',',''))
+
+            start_bin = int(start_bin/resolution)
+            end_bin = int(end_bin/resolution)
+        else:
+            start_bin = 0
+            end_bin = None
+
+    except ValueError:
+        print('Invalid format of chromosome coordinates!')
+
+    return chromosome, start_bin, end_bin
+
+

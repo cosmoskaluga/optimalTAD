@@ -56,7 +56,7 @@ The basic optimalTAD commands are:
     def visualize(self):
         start_time = time.time()
         parser = argparse.ArgumentParser(description='Visualize results')
-        parser.add_argument('--hic', type = str, help = 'Iteratively corrected Hi-C data')
+        parser.add_argument('--samplename', type = str, help = 'Samplename of Hi-C data')
         parser.add_argument('--tad', type = str, help = 'Set of Topologically associated domains')
         parser.add_argument('--region', type = str, help = 'Genome region')
         parser.add_argument('--resolution', type = int, help = 'Resolution')

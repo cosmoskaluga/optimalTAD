@@ -9,34 +9,28 @@ import logging
 from .. optimization import chipseqloader
 
 
+hic_pos       = [0.15, 0.4, 0.8, 0.7]
+chip_pos      = [0.15, 0.15, 0.8, 0.32]
+chrom_pos     = [0.15, 0.14, 0.8, 0.010]
+cbap_pos      = [0.9, 0.8, 0.015, 0.22]
+hic_text_pos  = [0.07, 0.75, 0.1, 0.1]
+chip_text_pos = [0.05, 0.25, 0.1, 0.1]
+
+
 class Plot:
-    def __init__(self, path_to_hic, region, resolution, log2_chip, zscore_chip, path_to_chipseq = False):
+    def __init__(self, path_to_hic, chromosome, start_bin, end_bin, resolution, log2_chip, zscore_chip, path_to_chipseq = False):
         self.path_to_hic = path_to_hic
         self.resolution = resolution
         self.path_to_chipseq = path_to_chipseq
         self.log2_chip = log2_chip
         self.zscore_chip = zscore_chip
-        
+        self.start_bin = start_bin
+        self.end_bin = end_bin
+        self.chromosome = chromosome
+
         hic_matrix = np.loadtxt(path_to_hic)
-        
-        region_split = region.split(':')
-        try:
-            self.chromosome = region_split[0]
-            if len(region_split) == 2:
-                coordinates = region_split[1].split('-')
-                self.start_bin = int(coordinates[0].replace(',',''))
-                self.end_bin = int(coordinates[1].replace(',',''))
-            
-                self.start_bin = int(self.start_bin/self.resolution)
-                self.end_bin = int(self.end_bin/self.resolution)
-            else:
-                self.start_bin = 0
-                self.end_bin = np.shape(hic_matrix)[0]
-        except ValueError:
-            print('Invalid format of chromosome coordinates!')
-        
         hic_matrix = hic_matrix[self.start_bin:self.end_bin, self.start_bin:self.end_bin]
-        self.matrix = ndimage.rotate(hic_matrix, 45, order=0, reshape=True, prefilter=False, cval=np.nan)
+        self.matrix = ndimage.rotate(hic_matrix, 45, order = 0, reshape = True, prefilter = False, cval = np.nan)
         
         if not path_to_chipseq == False:
             ChipSeqLoader = chipseqloader.ChipSeq(path_to_chipseq)
@@ -51,14 +45,10 @@ class Plot:
     
     def plotHiC(self, text = 'Hi-C', cmap = 'coolwarm', nticks = 4, figsize = (11, 4)):
         self.fig = plt.figure(figsize=figsize)
-        heatmap_pos=[0.15, 0.4, 0.8, 0.7]
-        chrom_pos=[0.15, 0.14, 0.8, 0.010]
-        text_pos = [0.07, 0.75, 0.1, 0.1]
-        cbap_pos = [0.9, 0.8, 0.015, 0.22]
         
-        h_ax = self.fig.add_axes(heatmap_pos)
+        h_ax = self.fig.add_axes(hic_pos)
         c_ax = self.fig.add_axes(chrom_pos)
-        text_ax = self.fig.add_axes(text_pos)
+        text_ax = self.fig.add_axes(hic_text_pos)
         cbar_ax = self.fig.add_axes(cbap_pos)
         
         m = self.matrix
@@ -95,7 +85,7 @@ class Plot:
         text_ax.text(0, 0, text, fontsize = 12)
         text_ax.axis('off')
 
-    def plotTAD(self, path_to_tad, vline_linewidth = 1., vline_linestyle = 'dashed', tad_linewidth = 1.2, tad_linestyle = '--'):
+    def plotTAD(self, path_to_tad, tad_linewidth = 1.2, tad_linestyle = '--'):
         tad = pd.read_csv(path_to_tad, header = None, names = ['Chr', 'Start', 'End'], sep = '\t')
         tad = tad[::-1]
         tad.End = tad.End + 1
@@ -105,20 +95,19 @@ class Plot:
         
         tad_short = self.tad.loc[(self.tad.Start >= self.start_bin) & (self.tad.End <= self.end_bin)]
         border = tad_short[['Start', 'End']].values
+
+        self.border = border
         
         for sl in border:
             mid_point = (sl[1] - sl[0])/2
             x_val = (np.array([sl[0], sl[0] + mid_point, sl[1]]) - self.start_bin) * self.coeff
             y_val = np.array([self.ylim_start, self.ylim_start - mid_point*self.coeff, self.ylim_start])
             self.h_ax.plot(x_val, y_val, linewidth = tad_linewidth, linestyle = tad_linestyle, color = 'black')
-            self.chip_ax.axvline(sl[0], linewidth = vline_linewidth, linestyle = vline_linestyle, color = 'grey', zorder = 1)
-            self.chip_ax.axvline(sl[1], linewidth = vline_linewidth, linestyle = vline_linestyle, color = 'grey', zorder = 1)
 
-    def plotChiPSeqTrack(self, text = 'ChIP-seq', fontsize = 12):
-        chip_pos = [0.15, 0.15, 0.8, 0.32]
-        text_pos = [0.05, 0.25, 0.1, 0.1]
+
+    def plotChipSeqTrack(self, text = 'ChIP-seq', vline_linewidth = 1., vline_linestyle = 'dashed', fontsize = 12):
         chip_ax = self.fig.add_axes(chip_pos)
-        text_ax = self.fig.add_axes(text_pos)
+        text_ax = self.fig.add_axes(chip_text_pos)
         
         chip_score = self.chip_data.Score.values[self.start_bin:self.end_bin]
         x_val = self.chip_data.Start.values/self.resolution
@@ -128,9 +117,23 @@ class Plot:
         chip_ax.set_xlim(self.start_bin - 0.5, self.end_bin)
         self.chip_ax = chip_ax
         chip_ax.axis('off')
-    
+
+        
+        try:
+            for sl in self.border:
+                self.chip_ax.axvline(sl[0], linewidth = vline_linewidth, linestyle = vline_linestyle, color = 'grey', zorder = 1)
+                self.chip_ax.axvline(sl[1], linewidth = vline_linewidth, linestyle = vline_linestyle, color = 'grey', zorder = 1)  
+        except NameError:
+            print("There are no borders")
+
         text_ax.text(0, 0, text, fontsize = fontsize)
         text_ax.axis('off')
+
+    def plotRnaSeqTrack(self, text = 'RNA-seq'):
+        pass
+
+    def plotAnnotationTrack(self):
+        pass
     
     def saveplot(self, filename, dpi = 200, bbox_inches = 'tight'):
         self.fig.savefig(filename, dpi = dpi, bbox_inches = bbox_inches)
