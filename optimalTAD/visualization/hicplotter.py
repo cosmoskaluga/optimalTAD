@@ -49,9 +49,7 @@ class Plot:
         y_max = np.sqrt(x_max*x_max*2)
         self.coeff = (y_max - y_min)/(x_max - x_min)
     
-    def plotHiC(self, figsize = (11, 4), text = 'Hi-C', cmap = 'coolwarm', nticks = 4):
-        #coolwarm
-        cmap = 'coolwarm'
+    def plotHiC(self, text = 'Hi-C', cmap = 'coolwarm', nticks = 4, figsize = (11, 4)):
         self.fig = plt.figure(figsize=figsize)
         heatmap_pos=[0.15, 0.4, 0.8, 0.7]
         chrom_pos=[0.15, 0.14, 0.8, 0.010]

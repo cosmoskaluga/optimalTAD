@@ -64,7 +64,7 @@ The basic optimalTAD commands are:
         parser.add_argument('--log2_chip', action='store_true', help = 'log2 transformation of ChIP-Seq track')
         parser.add_argument('--zscore_chip', action='store_true', help = 'Z-score transformation of ChIP-Seq track')
         args = parser.parse_args(sys.argv[2:])
-        plotting.main(args, self.log)
+        plotting.main(args, self.cfg['visualization'], self.log)
         
         cpu_time = round(time.time()-start_time, 2)
         self.log.info('Execution time: {} sec'.format(cpu_time))
