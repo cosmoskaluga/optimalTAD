@@ -81,3 +81,12 @@ def split_chromosome_input(region, resolution):
     return chromosome, start_bin, end_bin
 
 
+def get_labels(start_bin, end_bin, nticks, resolution):
+    interval = (end_bin - start_bin)
+    ticks = list(np.linspace(0, interval, nticks).astype(int))
+    pos = np.linspace(start_bin, end_bin, nticks) * resolution/1000 # kb
+    pos = pos.astype(int).astype(str)
+    labels = [i + ' kb' for i in pos]
+    return ticks, labels
+
+
