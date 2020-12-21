@@ -93,7 +93,7 @@ def main(args, cfg, log):
         best_gamma_array.append(best_gamma)
         
         
-        df = pd.merge(df, df_sample, on = 'Gamma', how='outer', left_index=True)
+        df = pd.merge(df, df_sample, on = 'Gamma', how = 'outer', left_index = True)
         log.info('Done!')
         print()
     
@@ -108,6 +108,7 @@ def main(args, cfg, log):
                       index_min = cfg.getint('stair', 'index_min'),
                       index_max = cfg.getint('stair', 'index_max'),
                       output_path = cfg.get('output', 'path_to_stair_figure') + '.' + cfg.get('output', 'figure_postfix'),
-                      dpi = cfg.getint('output', 'figure_dpi'))
-    
+                      dpi = cfg.getint('output', 'figure_dpi'), 
+                      path_to_stair_dataframe = cfg.get('output', 'path_to_stair_dataframe'))
+
     df.to_csv(cfg.get('output', 'path_to_amplitude_file'), header = True, index=False)

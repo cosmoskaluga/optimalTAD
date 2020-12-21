@@ -41,7 +41,7 @@ def plotAmplitude(data, output_path = 'amplitude.png', dpi = 200):
     return ax
 
 
-def plotStair(stair_df, best_gamma, index_min = -5, index_max = 5, output_path = 'stair.png', dpi = 200):
+def plotStair(stair_df, best_gamma, index_min = -5, index_max = 5, output_path = 'stair.png', dpi = 200, path_to_stair_dataframe = None):
     sns.set_palette(sns.color_palette('Set1'))
     fig, ax = plt.subplots(figsize=(9, 7))
     for name, gamma in zip(list(stair_df.keys()), best_gamma):
@@ -70,6 +70,11 @@ def plotStair(stair_df, best_gamma, index_min = -5, index_max = 5, output_path =
         if not os.path.exists(path) and path != '':
             os.makedirs(path, exist_ok=True)
         ax.figure.savefig(output_path, dpi=dpi, bbox_inches='tight')
+
+    if path_to_stair_dataframe:
+        x_val = np.arange(index_min, index_max, 1)
+        stair_df.index = x_val
+        stair_df.to_csv(path_to_stair_dataframe, header = True, index=True)
 
     return ax
 
