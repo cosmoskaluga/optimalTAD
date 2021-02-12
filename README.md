@@ -3,7 +3,7 @@
 # optimalTAD
 <a href="https://github.com/cosmoskaluga/optimalTAD"><img width="25%" src="https://github.com/cosmoskaluga/optimalTAD/blob/master/docs/optimalTAD_logo.png"></a>
 
-Algorithm for finding the optimal set of Topologically Associating Domains based on [Armatus](https://github.com/kingsfordgroup/armatus) software.
+Algorithm for finding the optimal set of Topologically Associating Domains based on the [Armatus](https://github.com/kingsfordgroup/armatus) software.
 
 ## Getting Started
 
