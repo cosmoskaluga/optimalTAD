@@ -5,12 +5,12 @@ import os
 import numpy as np
 import pandas as pd
 
-from . optimization import hicloader, chipseqloader
-from . optimization import tadcaller
-from . optimization import tadnumeration
-from . optimization import staircaller
-from . optimization import utils
-from . optimization import plotter
+from . import hicloader, chipseqloader
+from . import tadcaller
+from . import tadnumeration
+from . import staircaller
+from . import utils
+from . import plotter
 
 
 def run_armatus(args, chromsize, samplename):
@@ -28,7 +28,7 @@ def run_armatus(args, chromsize, samplename):
                                    args.stepsize,
                                    armatus_output,
                                    chromosome)
-        num+=1
+        num += 1
     utils.progressbar(num, len(chromsize.keys()))
 
 

@@ -5,8 +5,8 @@ import os
 import numpy as np
 import pandas as pd
 
-from . visualization import hicplotter, dataloader
-from . optimization import utils
+from . import settings, dataloader
+from .. optimization import utils
 
 log = logging.getLogger(__name__)
 
@@ -15,7 +15,7 @@ def main(args, cfg, log):
     chromosome, start_bin, end_bin = utils.split_chromosome_input(args.region, args.resolution)
     hic_filemane = os.path.join('output/data', args.samplename, chromosome + '.txt.gz')
 
-    plotter = hicplotter.Plot(hic_filemane,
+    plotter = settings.Plot(hic_filemane,
                                 chromosome, 
     							start_bin,
                                 end_bin,

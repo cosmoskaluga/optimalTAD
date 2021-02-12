@@ -2,10 +2,10 @@ import argparse
 import logging
 import sys
 import time
-from . import calculate
-from . import plotting
 from . import logger
 from . import config
+from . visualization import plot
+from . optimization import run
 
 class optimalTAD:
     def __init__(self):
@@ -48,7 +48,7 @@ The basic optimalTAD commands are:
         parser.set_defaults(log2_chip = False)
         parser.set_defaults(zscore_chip = False)
         args = parser.parse_args(sys.argv[2:])
-        calculate.main(args, self.cfg, self.log)
+        run.main(args, self.cfg, self.log)
         
         cpu_time = round(time.time()-start_time, 2)
         self.log.info('Execution time: {} sec'.format(cpu_time))
@@ -66,7 +66,7 @@ The basic optimalTAD commands are:
         parser.set_defaults(log2_chip = False)
         parser.set_defaults(zscore_chip = False)
         args = parser.parse_args(sys.argv[2:])
-        plotting.main(args, self.cfg['visualization'], self.log)
+        plot.main(args, self.cfg['visualization'], self.log)
         
         cpu_time = round(time.time()-start_time, 2)
         self.log.info('Execution time: {} sec'.format(cpu_time))
