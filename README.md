@@ -1,3 +1,4 @@
+[![Documentation Status](https://readthedocs.org/projects/optimaltad/badge/?version=latest)](https://optimaltad.readthedocs.io/en/latest)
 [![BCH compliance](https://bettercodehub.com/edge/badge/cosmoskaluga/optimalTAD?branch=master)](https://bettercodehub.com/)
 # optimalTAD
 <a href="https://github.com/cosmoskaluga/optimalTAD"><img width="25%" src="https://github.com/cosmoskaluga/optimalTAD/blob/master/docs/optimalTAD_logo.png"></a>
