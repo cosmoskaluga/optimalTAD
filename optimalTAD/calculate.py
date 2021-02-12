@@ -72,7 +72,7 @@ def main(args, cfg, log):
         log.info('Calculating indexes')
         ind, tads = tadnumeration.get_numeration(chrs, args.resolution, sizes, samplename, args.gamma_max, args.stepsize)
         
-        
+        #print(tads[0.0])
         
         log.info('Calculating stair amplitude')
         stairs, amplitudes = staircaller.get_stairs(ind,
@@ -82,7 +82,6 @@ def main(args, cfg, log):
                                                     acetyl_min = cfg.getint('stair', 'acetyl_min'),
                                                     acetyl_max = cfg.getint('stair', 'acetyl_max'))
             
-
         df_sample = pd.DataFrame(amplitudes.items(), columns = ['Gamma', samplename])
         best_gamma = utils.optimal_gamma(df_sample)
         log.info('The optimal gamma for {} is {}'.format(samplename, best_gamma))
@@ -92,8 +91,7 @@ def main(args, cfg, log):
         stair_dict[samplename] = stairs[best_gamma]
         best_gamma_array.append(best_gamma)
         
-        
-        df = pd.merge(df, df_sample, on = 'Gamma', how = 'outer', left_index = True)
+        df = pd.merge(df, df_sample, on = 'Gamma', how = 'outer')
         log.info('Done!')
         print()
     

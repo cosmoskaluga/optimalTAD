@@ -8,12 +8,24 @@ import logging
 log = logging.getLogger(__name__)
 
 
+def sort_files(arr):
+    arr = np.array(arr)
+    gamma_list = np.array([])
+    for i in arr:
+        gamma_str = i.split('gamma.')[1]
+        gamma_str = gamma_str.split('.txt')[0]
+        gamma_list = np.append(gamma_list, gamma_str)
+    return arr[np.argsort(gamma_list)]
+
+
+
 def get_tad_files(input_path, chrs, gamma_max, stepsize):
-    gamma_values = np.linspace(0, gamma_max, round(gamma_max/stepsize) + 1, endpoint=True).round(3)
+    gamma_values = np.linspace(0, gamma_max, round(gamma_max/stepsize) + 1, endpoint = True).round(3)
     tad_files = {key: [] for key in gamma_values}
     for chromosome in chrs:
         path = os.path.join(input_path, chromosome + '/*')
-        filenames = glob.glob(path)
+        #filenames = glob.glob(path)
+        filenames = sort_files(glob.glob(path))
         for gamma, file in zip(gamma_values, filenames):
             tad_files[gamma].append(file)
         
