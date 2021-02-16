@@ -42,7 +42,7 @@ def main(args, cfg, log):
         log.info('\033[1m' + 'Samplename: ' + samplename + '\033[0m')
             
         log.info('Loading Hi-C data')
-        set_chromosomes = cfg.get('general', 'set_chromosomes')
+        set_chromosomes = cfg.get('chromosomes', 'set_chromosomes')
         HicLoader = hicloader.HiC(hic_path,
                                   samplename,
                                   args.hic_format,
