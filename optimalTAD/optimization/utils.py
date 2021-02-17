@@ -81,6 +81,16 @@ def split_chromosome_input(region, resolution):
     return chromosome, start_bin, end_bin
 
 
+def get_chipname(chipnames, subfname):
+    c = 0
+    for name in chipnames:
+        f = os.path.split(name)[1].split('.')[0]
+        if f == subfname:
+            break
+        c+=1
+    return chipnames[c]
+
+
 def get_labels(start_bin, end_bin, nticks, resolution):
     interval = (end_bin - start_bin)
     ticks = list(np.linspace(0, interval, nticks).astype(int))

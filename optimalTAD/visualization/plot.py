@@ -33,7 +33,7 @@ def main(args, cfg, log):
                                     cfg['vline_linestyle'], 
                                     int(cfg['fontsize']))
 
-    if args.rnaseq != False:
+    if args.rnaseq != 'False':
         rnaseq = dataloader.get_rnaseq(args.rnaseq, chromosome, start_bin, end_bin)
         plotter.plotTrack(rnaseq, cfg['rnaseq_text'], 
                                 float(cfg['vline_linewidth']), 
