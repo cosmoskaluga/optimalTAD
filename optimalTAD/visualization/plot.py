@@ -13,9 +13,9 @@ log = logging.getLogger(__name__)
 
 def main(args, cfg, log):    
     chromosome, start_bin, end_bin = utils.split_chromosome_input(args.region, args.resolution)
-    hic_filemane = os.path.join('output/data', args.samplename, chromosome + '.txt.gz')
+    hic_filename = os.path.join('output/data', args.samplename, chromosome + '.txt.gz')
 
-    plotter = settings.Plot(hic_filemane,
+    plotter = settings.Plot(hic_filename,
                                 chromosome, 
     							start_bin,
                                 end_bin,

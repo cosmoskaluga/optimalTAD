@@ -59,7 +59,6 @@ def get_coefficients(amin, amax, cmin, cmax):
     return k, b
 
 
-
 def load_cool(path, samplename, set_chromosomes, fileformat, balance, empty_row_imputation, truncation, shrinkage_min, shrinkage_max, log2_transformation):
     import cooler
     path_to_output = os.path.join(sys.path[0], 'output')

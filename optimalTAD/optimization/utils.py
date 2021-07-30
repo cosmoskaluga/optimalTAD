@@ -88,7 +88,7 @@ def get_chipname(chipnames, subfname):
         if f == subfname:
             break
         c+=1
-    return chipnames[c]
+    return chipnames[0]
 
 
 def get_labels(start_bin, end_bin, nticks, resolution):

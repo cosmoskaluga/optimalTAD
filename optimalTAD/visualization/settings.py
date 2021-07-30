@@ -23,11 +23,13 @@ class Plot:
         
         x_min = self.start_bin
         x_max = self.end_bin
-        y_min = self.start_bin
-        y_max = np.sqrt(x_max * x_max * 2)
-        self.coeff = (y_max - y_min)/(x_max - x_min)
+        #y_min = self.start_bin
+        y_max = np.sqrt((x_max-x_min)**2 + (x_max-x_min)**2)
+        self.coeff = (y_max - 0)/(x_max - x_min)
+        #y_max = np.sqrt(x_max * x_max * 2)
+        #self.coeff = (y_max - y_min)/(x_max - x_min)
     
-    def plotHiC(self, text = 'Hi-C', cmap = 'coolwarm', nticks = 4, figsize = (11, 4)):
+    def plotHiC(self, text = 'Hi-C', cmap = 'coolwarm', nticks = 4, figsize = (8, 4)):
         self.position = np.array([0.15, 0.4, 0.8, 0.6])
         p = self.position[1] + (1-self.position[1])/2
         hic_text_pos  = np.array([0.07, p, 0.1, 0.1])
@@ -73,7 +75,7 @@ class Plot:
 
     def plotTrack(self, chip_data,  text = 'ChIP-seq', vline_linewidth = 1., vline_linestyle = 'dashed', fontsize = 12):
         old_pos = self.position[1]
-        self.position[1] -= 0.18
+        self.position[1] -= 0.09#0.18
         self.position[3] = 0.18
         chip_ax = self.fig.add_axes(self.position)
         p = self.position[1] + (old_pos-self.position[1])/2
