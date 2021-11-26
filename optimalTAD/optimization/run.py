@@ -61,8 +61,8 @@ def main(args, cfg, log):
         
         
         log.info('Loading epigenetic data')
-        ChipSeqLoader = chipseqloader.ChipSeq(chipseq_path)
-        chip_data = ChipSeqLoader(args.log2_chip, set_chromosomes, args.zscore_chip)
+        ChipSeqLoader = chipseqloader.ChipSeq(chipseq_path, set_chromosomes)
+        chip_data = ChipSeqLoader(args.log2_chip, args.zscore_chip)
         
         
         log.info('Running armatus in serial on all {} chromosomes:'.format(len(chrs)))

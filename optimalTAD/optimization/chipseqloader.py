@@ -18,10 +18,12 @@ bigwig_extensions = ['.bigwig', '.bigWig', '.BigWig', '.bw']
 
 
 def get_bedgraph(self):
+    skiplines = ('browser', '#', 'track')
+
     with open(self.path) as file_handler:
         data = np.array([])
         for line in file_handler:
-            if line.startswith('chr'):
+            if line.startswith(tuple(self.chrnames)) and not line.startswith(skiplines):
                 row_content = np.array(line.split())
                 if not data.size == 0:
                     data = np.vstack((data, row_content))
@@ -57,29 +59,37 @@ def get_bigwig_file(self):
         convert_dict = {'Chr': str, 'Start': int, 'End': int, 'Score': float}
         df_chip = df_chip.astype(convert_dict)
 
+        if self.chrnames != ['']:
+            df_chip = df_chip.loc[df_chip['Chr'].isin(self.chrnames)]
+
     return df_chip
 
 
 
 class ChipSeq:
-    def __init__(self, path):
+    def __init__(self, path, set_chromosomes):
         self.path = path
         self.extension = os.path.splitext(path)[1]
-        
+
+        if set_chromosomes != 'None':
+            self.chrnames = set_chromosomes.split(',')
+        else:  
+            self.chrnames = ['']
+
         accepted_extensions = bedgraph_extensions + bigwig_extensions
         if self.extension not in accepted_extensions:
             log.error('Incompatible format of ChIP-seq file!')
             sys.exit(1)
 
-    def __call__(self, log2_chip, set_chromosomes, zscore_chip):
+    def __call__(self, log2_chip, zscore_chip):
         if self.extension in bedgraph_extensions:
             df_chip = get_bedgraph(self)
         else:
             df_chip = get_bigwig_file(self)
     
-        if set_chromosomes != 'None':
-            chrnames = set_chromosomes.split(',')
-            df_chip = df_chip.loc[df_chip['Chr'].isin(chrnames)]
+        #if set_chromosomes != 'None':
+            #chrnames = set_chromosomes.split(',')
+            #df_chip = df_chip.loc[df_chip['Chr'].isin(chrnames)]
         
         if log2_chip:
             score = df_chip.Score.values
