@@ -30,19 +30,43 @@ Both Hi-C and ChIP-Seq data are required for `optimalTAD` running. Hi-C data sho
 ### Usage
 To launch the algorithm just type the following at the command line:
 ```bash
-optimalTAD [--hic HIC] [--chipseq CHIPSEQ] [--np NP] [--resolution RESOLUTION] [--stepsize STEPSIZE] [--gamma_max GAMMA_MAX] [--hic_format HIC_FORMAT]
+optimalTAD run [-h] [--hic HIC [HIC ...]] [--chipseq CHIPSEQ [CHIPSEQ ...]] [--np NP] [--resolution RESOLUTION] [--stepsize STEPSIZE] [--gamma_max GAMMA_MAX]
+                   [--hic_format HIC_FORMAT] [--empty_row_imputation] [--truncation] [--log2_hic] [--log2_chip] [--zscore_chip]
 ```
 
-Optional arguments:
+Required and optional arguments:
 
-    -h, --help                     Help message
-    --hic [HIC]                    Iteratively corrected Hi-C matrices in hdf5 format
-    --chipseq [CHIPSEQ]            ChIP-Seq data
-    --np [NP]                      Number of processors (=1)
-    --resolution [RESOLUTION]      Resolution of Hi-C matrices (=1)
-    --stepsize [STEPSIZE]          Step size to increment gamma parameter
-    --gamma_max [GAMMA_MAX]        Max gamma parameter (=4)
-    --hic_format [HIC_FORMAT]      Hi-C matrices input format for armatus (=txt.gz)
+    -h, --help                          Help message
+    --hic HIC [HIC ...]                 Iteratively corrected Hi-C matrices in .hdf5 or .cool format
+    --chipseq CHIPSEQ [CHIPSEQ ...]     Epigenetic data (ChIP-seq, ChIP-chip)
+    --np [NP]                           Number of processors (=1)
+    --resolution [RESOLUTION]           Resolution of Hi-C matrices (=1)
+    --stepsize [STEPSIZE]               Step size to increment gamma parameter
+    --gamma_max [GAMMA_MAX]             Max gamma parameter (=4)
+    --hic_format [HIC_FORMAT]           Hi-C matrices input format for armatus (=txt.gz)
+    --empty_row_imputation              Empty line imputation
+    --truncation                        Truncation of a Hi-C-matrix (=False)
+    --log2_hic                          log2 transformation of Hi-C matrix (=False)
+    --log2_chip                         log2 transformation of epigenetic data (=False)
+    --zscore_chip                       Z-score transformation of (=False)  
+    
+    
+Hi-C data with the obtained optimal TAD set might be visualized using the function below:
+```bash
+optimalTAD visualize [-h] [--samplename SAMPLENAME] [--region REGION] [--resolution RESOLUTION] [--chipseq CHIPSEQ] [--log2_chip] [--zscore_chip] [--rnaseq RNASEQ]
+```
+
+with the following arguments:
+
+    -h, --help                          Help message
+    --samplename SAMPLENAME             Samplename of Hi-C data (for example, LacZ_1)
+    --region REGION                     Genome region to plot (for example, chr2L:1,000,000-5,000,000)
+    --resolution RESOLUTION             Resolution of Hi-C matrix (=1)
+    --chipseq CHIPSEQ                   Path to epigenetic data
+    --log2_chip                         log2 transformation of epigenetic data
+    --zscore_chip                       Z-score transformation of epigenetic data
+    --rnaseq RNASEQ                     Add additional track to the plot
+    
  
 ### Documentation
 The documentation for `optimalTAD` will be available on readthedocs.
