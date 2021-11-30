@@ -7,6 +7,7 @@ import glob
 import logging
 
 from itertools import repeat
+from collections import Counter
 from . import utils
 
 
@@ -17,23 +18,46 @@ bigwig_extensions = ['.bigwig', '.bigWig', '.BigWig', '.bw']
 
 
 
-def get_bedgraph(self):
-    skiplines = ('browser', '#', 'track')
+def equal_sizes(data, chromsize):
+    data_size = dict(Counter(data.Chr.values))
+    return data_size == chromsize
 
-    with open(self.path) as file_handler:
-        data = np.array([])
-        for line in file_handler:
-            if line.startswith(tuple(self.chrnames)) and not line.startswith(skiplines):
-                row_content = np.array(line.split())
-                if not data.size == 0:
-                    data = np.vstack((data, row_content))
-                else:
-                    data = row_content
+
+
+def binarize_data(data, chromsize, resolution):
+    if equal_sizes(data, chromsize) != True:
+        df = pd.DataFrame([])
+        sizes = np.fromiter(chromsize.values(), dtype = int)
+        for chrname, length in zip(np.unique(data.Chr.values), sizes):
+            chr_data = data.loc[data.Chr == chrname]
+            arr = []
+            for i in np.arange(0, resolution*length, resolution):
+                d = chr_data.loc[(chr_data.Start < i+resolution) & (chr_data.Start >= i)]
+                arr.append([chrname, str(i), str(i+resolution), str(d.Score.mean(skipna=True))])
+
+            arr = np.reshape(arr, (length, 4))
+            df = pd.concat([df, pd.DataFrame(arr)])
+        data = df
+        data.columns = ['Chr', 'Start', 'End', 'Score']
+        data.replace(['inf', '-inf'], 'nan', inplace=True)
     
-        df_chip = pd.DataFrame(data, columns = ['Chr', 'Start', 'End', 'Score'])
-        df_chip = df_chip.replace('NA', 'nan')
-        convert_dict = {'Chr': str, 'Start': int, 'End': int, 'Score': float}
-        df_chip = df_chip.astype(convert_dict)
+    return data
+
+
+
+def get_bedgraph(self):
+    df_chip = pd.read_csv(self.path, sep = ' ', comment = 't', header = None, names = ['Chr', 'Start', 'End', 'Score'])
+
+    if self.chrnames != ['']:
+        df_chip = df_chip.loc[df_chip['Chr'].isin(self.chrnames)]
+
+    df_chip = df_chip.replace('NA', 'nan')
+    df_chip.replace(['inf', '-inf'], 'nan', inplace=True)
+
+    df_chip = binarize_data(df_chip, self.chromsize, self.resolution)
+    convert_dict = {'Chr': str, 'Start': int, 'End': int, 'Score': float}
+    df_chip = df_chip.astype(convert_dict)
+
     return df_chip
 
 
@@ -62,19 +86,24 @@ def get_bigwig_file(self):
         if self.chrnames != ['']:
             df_chip = df_chip.loc[df_chip['Chr'].isin(self.chrnames)]
 
+        df_chip = binarize_data(df_chip, self.chromsize, self.resolution)
+
     return df_chip
 
 
 
 class ChipSeq:
-    def __init__(self, path, set_chromosomes):
+    def __init__(self, path, set_chromosomes, chromsize, resolution):
         self.path = path
         self.extension = os.path.splitext(path)[1]
+        self.chromsize = chromsize
+        self.resolution = resolution
 
         if set_chromosomes != 'None':
             self.chrnames = set_chromosomes.split(',')
         else:  
             self.chrnames = ['']
+
 
         accepted_extensions = bedgraph_extensions + bigwig_extensions
         if self.extension not in accepted_extensions:
@@ -86,10 +115,6 @@ class ChipSeq:
             df_chip = get_bedgraph(self)
         else:
             df_chip = get_bigwig_file(self)
-    
-        #if set_chromosomes != 'None':
-            #chrnames = set_chromosomes.split(',')
-            #df_chip = df_chip.loc[df_chip['Chr'].isin(chrnames)]
         
         if log2_chip:
             score = df_chip.Score.values

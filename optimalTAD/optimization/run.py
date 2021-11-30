@@ -41,7 +41,7 @@ def main(args, cfg, log):
         samplename = os.path.split(hic_path)[1].split('.')[0]
         log.info('\033[1m' + 'Samplename: ' + samplename + '\033[0m')
             
-        log.info('Loading Hi-C data')
+        log.info('Load Hi-C data')
         set_chromosomes = cfg.get('chromosomes', 'set_chromosomes')
         HicLoader = hicloader.HiC(hic_path,
                                   samplename,
@@ -60,21 +60,20 @@ def main(args, cfg, log):
         sizes = np.fromiter(chromsize.values(), dtype = int)
         
         
-        log.info('Loading epigenetic data')
-        ChipSeqLoader = chipseqloader.ChipSeq(chipseq_path, set_chromosomes)
+        log.info('Load epigenetic data')
+        ChipSeqLoader = chipseqloader.ChipSeq(chipseq_path, set_chromosomes, chromsize, args.resolution)
         chip_data = ChipSeqLoader(args.log2_chip, args.zscore_chip)
         
         
-        log.info('Running armatus in serial on all {} chromosomes:'.format(len(chrs)))
+        log.info('Run armatus on {} chromosomes:'.format(len(chrs)))
         run_armatus(args, chromsize, samplename)
         
         
-        log.info('Calculating indexes')
+        log.info('Calculate indexes')
         ind, tads = tadnumeration.get_numeration(chrs, args.resolution, sizes, samplename, args.gamma_max, args.stepsize)
         
-        #print(tads[0.0])
         
-        log.info('Calculating stair amplitude')
+        log.info('Calculate amplitudes')
         stairs, amplitudes = staircaller.get_stairs(ind,
                                                     chip_data,
                                                     index_min = cfg.getint('stair', 'index_min'),
