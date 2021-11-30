@@ -49,7 +49,7 @@ def get_stairs(index_data, chip_data, index_min = -5, index_max = 5, acetyl_min 
                 
                 if idx <= -1:
                     interTAD = np.append(interTAD, acetyl_val)
-                if idx >= 0:
+                if idx >= 1:
                     TAD = np.append(TAD, acetyl_val)
             else:
                 median_val.append(np.nan)
