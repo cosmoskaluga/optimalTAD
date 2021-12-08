@@ -28,6 +28,13 @@ def select_optimal_tads(tads, optimal_gamma, samplename):
     merged_tads.to_csv(dst + 'domains.tad', header = True, index = False)
 
 
+def save_stairs(data, index_min, index_max, output_path):
+    data = pd.DataFrame(data)
+    x_val = np.arange(index_min, index_max, 1)
+    data.index = x_val
+    data.to_csv(output_path, header = True, index=True)
+
+
 def nan_array_comparison(func, arr, thresh):
     # https://stackoverflow.com/questions/47340000/how-to-get-rid-of-runtimewarning-invalid-value-encountered-in-greater
     # by Divakar

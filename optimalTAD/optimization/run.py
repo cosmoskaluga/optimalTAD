@@ -85,6 +85,11 @@ def main(args, cfg, log):
         best_gamma = utils.optimal_gamma(df_sample)
         log.info('The optimal gamma for {} is {}'.format(samplename, best_gamma))
         
+        utils.save_stairs(stairs, 
+                            index_min = cfg.getint('stair', 'index_min'),
+                            index_max = cfg.getint('stair', 'index_max'), 
+                            output_path = cfg.get('output', 'path_to_stair_data'))
+
         utils.select_optimal_tads(tads, best_gamma, samplename)
         
         stair_dict[samplename] = stairs[best_gamma]
@@ -104,8 +109,8 @@ def main(args, cfg, log):
                       best_gamma_array,
                       index_min = cfg.getint('stair', 'index_min'),
                       index_max = cfg.getint('stair', 'index_max'),
-                      output_path = cfg.get('output', 'path_to_stair_figure') + '.' + cfg.get('output', 'figure_postfix'),
+                      output_path = cfg.get('output', 'path_to_best_stair_figure') + '.' + cfg.get('output', 'figure_postfix'),
                       dpi = cfg.getint('output', 'figure_dpi'), 
-                      path_to_stair_dataframe = cfg.get('output', 'path_to_stair_dataframe'))
+                      path_to_stair_dataframe = cfg.get('output', 'path_to_best_stair_data'))
 
     df.to_csv(cfg.get('output', 'path_to_amplitude_file'), header = True, index=False)
