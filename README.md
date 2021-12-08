@@ -52,6 +52,18 @@ Required and optional arguments:
 All listed arguments can also be specified in the `config.ini` configuration file.
 
 Both Hi-C and ChIP-Seq data are required for `optimalTAD` running. We strongly recommend you to perform iterative correction ([Imakaev et al, 2012](https://www.nature.com/articles/nmeth.2148)) on your Hi-C data before running `optimalTAD`. ChIP-seq coverage track should be normalized by input and stored in .bedgraph or .bw file. No further preparation of ChIP-seq data is required, algorithm will binarize coverage with respect to chosen resolution of Hi-C map and provide log2 and z-score transformation if needed.
+
+### Running on test data
+First, execute `test_data.sh` script:
+```bash
+chmod a+x ./test_data.sh
+./test_data.sh
+```
+It will create `testdata` folder containing Hi-C and ChIP-seq data of Drosophila chromosome 2L. Next, run `optimalTAD`:
+
+```bash
+python3 -m optimalTAD run
+```
     
 ### Visualizing results
 Hi-C data with the obtained optimal TAD set can be visualized using the function below:
