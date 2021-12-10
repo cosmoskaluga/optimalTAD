@@ -19,7 +19,7 @@ import sphinx_rtd_theme
 # -- Project information -----------------------------------------------------
 
 project = 'optimalTAD'
-copyright = '2020, Dmitrii Smirnov'
+copyright = '2021, Dmitrii Smirnov'
 author = 'Dmitrii Smirnov'
 
 # The full version, including alpha/beta/rc tags
@@ -50,7 +50,9 @@ exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store']
 # The theme to use for HTML and HTML Help pages.  See the documentation for
 # a list of builtin themes.
 #
-html_theme = 'sphinx_rtd_theme'
+#html_theme = 'sphinx_rtd_theme'
+html_theme = "furo"
+#html_logo = './images/optimalTAD_logo_square.png'
 
 
 # The name of the Pygments (syntax highlighting) style to use.

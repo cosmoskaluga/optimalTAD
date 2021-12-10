@@ -104,7 +104,6 @@ class ChipSeq:
         else:  
             self.chrnames = ['']
 
-
         accepted_extensions = bedgraph_extensions + bigwig_extensions
         if self.extension not in accepted_extensions:
             log.error('Incompatible format of ChIP-seq file!')

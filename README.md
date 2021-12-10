@@ -1,7 +1,7 @@
 [![Documentation Status](https://readthedocs.org/projects/optimaltad/badge/?version=latest)](https://optimaltad.readthedocs.io/en/latest)
 [![BCH compliance](https://bettercodehub.com/edge/badge/cosmoskaluga/optimalTAD?branch=master)](https://bettercodehub.com/)
 
-<a href="https://github.com/cosmoskaluga/optimalTAD"><img width="70%" src="https://github.com/cosmoskaluga/optimalTAD/blob/master/docs/optimalTAD_logo_square.png"></a>
+<a href="https://github.com/cosmoskaluga/optimalTAD"><img width="70%" src="https://github.com/cosmoskaluga/optimalTAD/blob/master/docs/images/optimalTAD_logo_square.png"></a>
 
 This repo contains source code of the algorithm for finding the optimal set of Topologically Associating Domains (TADs) using a combination of Hi-C and ChIP-seq data. The algorithm is implemented in Python and incrporates [Armatus](https://github.com/kingsfordgroup/armatus) tool for calling TADs across different resolutions.
 

@@ -6,6 +6,9 @@
 ========================================
 Welcome to the optimalTAD documentation!
 ========================================
+
+.. image:: ./images/optimalTAD_logo_square.png
+
 optimalTAD is an algorithm developed for finding the optimal set of topologically associated domains (TADs) based on a combination of Hi-C and epigenetic data.
 
 
@@ -13,12 +16,17 @@ Contents:
 ---------
 
 .. toctree::
-    :maxdepth: 1
+    :maxdepth: 2
 
     content/Requirements
     content/Installation
     content/Input_format
+    content/Configuration_file
     content/Usage
     content/Example_usage
-    content/Output
+
+
+How to cite?
+------------
+
 

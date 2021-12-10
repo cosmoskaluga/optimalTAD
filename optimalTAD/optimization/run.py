@@ -59,7 +59,7 @@ def main(args, cfg, log):
         chrs = np.array(list(chromsize.keys()), dtype = str)
         sizes = np.fromiter(chromsize.values(), dtype = int)
         
-        
+
         log.info('Load epigenetic data')
         ChipSeqLoader = chipseqloader.ChipSeq(chipseq_path, set_chromosomes, chromsize, args.resolution)
         chip_data = ChipSeqLoader(args.log2_chip, args.zscore_chip)

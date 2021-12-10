@@ -24,13 +24,13 @@ def plotAmplitude(data, output_path = 'amplitude.png', dpi = 200):
     fig, ax = plt.subplots(figsize=(9, 7))
     for sample in samples:
         y_val = data[sample].values
-        ax.plot(x_val, y_val, linewidth = 2.5, ls='--', marker='o', label = sample)
+        ax.plot(x_val, y_val, linewidth = 2.5, ls='--', color = 'steelblue', marker='o', label = sample)
 
     ax.set_xlabel('Gamma', fontsize = 20)
     ax.set_ylabel('Amplitude', fontsize = 20)
     ax.legend(frameon=False, fontsize = 12)
     stylize_axes(ax)
-    ax.grid(linestyle=':', linewidth='0.3', color='black')
+    ax.grid(linestyle=':', linewidth='0.2', color='black')
     
     if output_path:
         path = os.path.dirname(output_path)
@@ -56,11 +56,11 @@ def plotStair(stair_df, best_gamma, index_min = -5, index_max = 5, output_path =
     
         poly = np.polyfit(x_val, y_val, 3)
         poly_y = np.poly1d(poly)(x_val)
-        ax.plot(x_val, poly_y, linewidth = 2.5, label = name + ' ($\gamma$ = ' + str(gamma) + ')')
+        ax.plot(x_val, poly_y, linewidth = 2.5, color = 'steelblue', label = name + ' ($\gamma$ = ' + str(gamma) + ')')
 
     ax.set_xlabel('Distance to TAD boundary, kb', fontsize = 20)
     ax.set_ylabel('Median z-score of acetylation values', fontsize = 20)
-    ax.grid(linestyle=':', linewidth='0.3', color='black')
+    ax.grid(linestyle=':', linewidth='0.2', color='black')
     
     stylize_axes(ax)
     ax.legend(frameon = False, fontsize = 12)

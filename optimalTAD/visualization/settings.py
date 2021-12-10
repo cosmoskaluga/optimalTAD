@@ -18,6 +18,7 @@ class Plot:
         self.resolution = resolution
 
         hic_matrix = np.loadtxt(path_to_hic)
+        self.chromsize = {chromosome : hic_matrix.shape[0]}
         hic_matrix = hic_matrix[self.start_bin:self.end_bin, self.start_bin:self.end_bin]
         self.matrix = ndimage.rotate(hic_matrix, 45, order = 0, reshape = True, prefilter = False, cval = np.nan)
         
@@ -28,6 +29,9 @@ class Plot:
         self.coeff = (y_max - 0)/(x_max - x_min)
         #y_max = np.sqrt(x_max * x_max * 2)
         #self.coeff = (y_max - y_min)/(x_max - x_min)
+
+    def get_chromsize(self):
+        return self.chromsize
     
     def plotHiC(self, text = 'Hi-C', cmap = 'coolwarm', nticks = 4, figsize = (8, 4)):
         self.position = np.array([0.15, 0.4, 0.8, 0.6])

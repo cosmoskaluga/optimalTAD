@@ -13,9 +13,9 @@ def get_domains(samplename, chromosome):
     df = df.loc[df.Chr == chromosome]
     return df
 
-def get_chipseq(samplename, chromosome, log2_chip = False, zscore_chip = False):
-	ChipSeqLoader = chipseqloader.ChipSeq(samplename)
-	chip_data = ChipSeqLoader(log2_chip, chromosome, zscore_chip)
+def get_chipseq(samplename, chromosome, chromsize, resolution, log2_chip = False, zscore_chip = False):
+	ChipSeqLoader = chipseqloader.ChipSeq(samplename, chromosome, chromsize, resolution)
+	chip_data = ChipSeqLoader(log2_chip, zscore_chip)
 	chip_data = chip_data.loc[chip_data.Chr.isin([chromosome])]
 	return chip_data
 
