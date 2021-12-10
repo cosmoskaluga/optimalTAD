@@ -84,6 +84,6 @@ with the following arguments:
     
  
 ## Documentation
-The documentation for `optimalTAD` will be available on readthedocs.
+`optimalTAD` documentation is available on [readthedocs](https://optimaltad.readthedocs.io/).
                         
 
