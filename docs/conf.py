@@ -14,12 +14,12 @@
 # import sys
 # sys.path.insert(0, os.path.abspath('.'))
 
-import sphinx_rtd_theme
+import furo
 
 # -- Project information -----------------------------------------------------
 
 project = 'optimalTAD'
-copyright = '2021, Dmitrii Smirnov'
+copyright = '2019-2021, Dmitrii Smirnov, Ekaterina Khrameeva'
 author = 'Dmitrii Smirnov'
 
 # The full version, including alpha/beta/rc tags
@@ -33,8 +33,12 @@ master_doc = 'index'
 
 # Add any Sphinx extension module names here, as strings. They can be
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
-# ones.
-extensions = ['sphinx_rtd_theme']
+#extensions = ['furo']
+extensions = [
+    'sphinx.ext.autodoc',
+    'sphinx.ext.todo',
+    'sphinx.ext.ifconfig',
+]
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']
