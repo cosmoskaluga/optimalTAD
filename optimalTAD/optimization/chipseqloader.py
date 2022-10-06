@@ -49,7 +49,8 @@ def get_bedgraph(self):
     df_chip = pd.read_csv(self.path, sep = ' ', comment = 't', header = None, names = ['Chr', 'Start', 'End', 'Score'])
 
     if self.chrnames != ['']:
-        df_chip = df_chip.loc[df_chip['Chr'].isin(self.chrnames)]
+        labels = utils.check_chrnames(self.chrnames, np.unique(df_chip.Chr))
+        df_chip = df_chip.loc[df_chip['Chr'].isin(labels)]
 
     df_chip = df_chip.replace('NA', 'nan')
     df_chip.replace(['inf', '-inf'], 'nan', inplace=True)
@@ -70,6 +71,7 @@ def get_bigwig_file(self):
         sys.exit(1)
 
     df_chip = pd.DataFrame([])
+
     for ch in bw.chroms().keys():
         intervals = bw.intervals(ch)
         df_intervals = pd.DataFrame(intervals, columns = ['Start', 'End', 'Score'])
@@ -84,12 +86,12 @@ def get_bigwig_file(self):
         df_chip = df_chip.astype(convert_dict)
 
         if self.chrnames != ['']:
-            df_chip = df_chip.loc[df_chip['Chr'].isin(self.chrnames)]
+            labels = utils.check_chrnames(self.chrnames, np.unique(df_chip.Chr))
+            df_chip = df_chip.loc[df_chip['Chr'].isin(labels)]
 
         df_chip = binarize_data(df_chip, self.chromsize, self.resolution)
 
     return df_chip
-
 
 
 class ChipSeq:
@@ -126,5 +128,7 @@ class ChipSeq:
             df_chip.Score = (df_chip.Score - df_chip.Score.mean()) / df_chip.Score.std(ddof=0)
 
         return df_chip
+
+
 
 

@@ -12,7 +12,6 @@ log = logging.getLogger(__name__)
 accepted_extensions = ['.mcool', '.cool', '.hdf5']
 
 
-
 def load_hdf5(path, samplename, set_chromosomes, fileformat, empty_row_imputation, truncation, shrinkage_min, shrinkage_max, log2_transformation):
     import h5py
     path = os.path.expanduser(path)
@@ -21,7 +20,8 @@ def load_hdf5(path, samplename, set_chromosomes, fileformat, empty_row_imputatio
     if set_chromosomes == 'None':
         labels = f['chromosomeLabels'][()].astype('<U5')
     else:
-        labels = set_chromosomes.split(',')
+        labels_config = set_chromosomes.split(',')
+        labels = utils.check_chrnames(labels_config, f['chromosomeLabels'][()].astype('<U5'))
     
     path_to_output = os.path.join(sys.path[0], 'output')
     path_to_sample = utils.check_path(path_to_output, 'data', samplename)
@@ -66,12 +66,13 @@ def load_cool(path, samplename, set_chromosomes, fileformat, balance, empty_row_
     coolfile = cooler.Cooler(path)
     
     if set_chromosomes == 'None':
-        chromosomes = coolfile.chromnames
+        labels = coolfile.chromnames
     else:
-        chromosomes = set_chromosomes.split(',')
+        labels_config = set_chromosomes.split(',')
+        labels = utils.check_chrnames(labels_config, coolfile.chromnames)
     
     chromsize = {}
-    for name in chromosomes:
+    for name in labels:
         path_to_file = os.path.join(path_to_sample, name + '.' + fileformat)
         matrix = coolfile.matrix(balance=balance).fetch(name)
         

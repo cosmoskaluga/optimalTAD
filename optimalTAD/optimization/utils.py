@@ -107,3 +107,23 @@ def get_labels(start_bin, end_bin, nticks, resolution):
     return ticks, labels
 
 
+def check_prefix(vector):
+    return ["chr" in chrm for chrm in vector]
+
+
+def check_chrnames(labels_config, labels):
+    if np.any(check_prefix(labels)) and not np.all(check_prefix(labels_config)):
+        labels_config = ['chr'+ chrm for chrm in labels_config]
+    elif not np.any(check_prefix(labels)) and np.all(check_prefix(labels_config)):   
+        labels_config = [chrm[3:] for chrm in labels_config]
+        
+    if set(labels_config).issubset(set(labels)):
+        chrnames = labels_config
+    elif len(set(labels).intersection(labels_config)) > 0:
+        chrnames = np.array(set(labels).intersection(labels_config))
+    else:
+        self.log.info('Specified choromosomes are not found! Please set correct chromosome names in the configuration file.')
+        sys.exit(1)
+            
+    return chrnames
+
