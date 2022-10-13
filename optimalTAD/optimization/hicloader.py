@@ -99,7 +99,7 @@ def load_cool(path, samplename, set_chromosomes, fileformat, balance, empty_row_
 
         amin = np.nanmin(matrix)
         amax = np.nanmax(matrix)
-        k,b = get_coefficients(amin, amax, 0.5, 352.7) # uncomment this
+        k,b = get_coefficients(amin, amax, shrinkage_min, shrinkage_max) # uncomment this
         matrix = matrix*k + b # uncomment this 
         
         if log2_transformation:

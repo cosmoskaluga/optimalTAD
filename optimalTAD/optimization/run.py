@@ -37,8 +37,10 @@ def main(args, cfg, log):
     stair_dict = {}
     best_gamma_array = []
     
-    for hic_path, chipseq_path in zip(args.hic, args.chipseq):
-        samplename = os.path.split(hic_path)[1].split('.')[0]
+    hic_files, chipseq_files, samplenames = utils.check_filenames(args.hic, args.chipseq)
+
+    for hic_path, chipseq_path, samplename in zip(hic_files, chipseq_files, samplenames):
+        #samplename = os.path.split(hic_path)[1].split('.')[0]
         log.info('\033[1m' + 'Samplename: ' + samplename + '\033[0m')
             
         log.info('Load Hi-C data')

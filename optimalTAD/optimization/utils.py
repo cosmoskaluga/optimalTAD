@@ -127,3 +127,19 @@ def check_chrnames(labels_config, labels):
             
     return chrnames
 
+
+def check_filenames(hic_files, chipseq_files):
+    samplenames = [os.path.split(i)[1].split('.')[0] for i in hic_files]
+    hic_files_number = len(hic_files)
+    chipseq_files_number = len(chipseq_files)
+    if hic_files_number != chipseq_files_number:
+        if hic_files_number == 1:
+            hic_files = np.repeat(hic_files, chipseq_files_number)
+            samplenames = [os.path.split(i)[1].split('.')[0] for i in chipseq_files]
+        elif chipseq_files_number == 1:
+            chipseq_files = np.repeat(chipseq_files, hic_files_number)
+        else:
+            print("ERROR: Please provide correct number of input Hi-C and ChIP-seq files")
+        
+    return np.array(sorted(hic_files)), np.array(sorted(chipseq_files)), np.array(sorted(samplenames))
+
