@@ -38,41 +38,43 @@ def main(args, cfg, log):
     best_gamma_array = []
     
     hic_files, chipseq_files, samplenames = utils.check_filenames(args.hic, args.chipseq)
+    sample_index = 0
 
     for hic_path, chipseq_path, samplename in zip(hic_files, chipseq_files, samplenames):
         #samplename = os.path.split(hic_path)[1].split('.')[0]
         log.info('\033[1m' + 'Samplename: ' + samplename + '\033[0m')
-            
-        log.info('Load Hi-C data')
-        set_chromosomes = cfg.get('chromosomes', 'set_chromosomes')
-        HicLoader = hicloader.HiC(hic_path,
+    
+        if sample_index < len(np.unique(hic_files)):        
+            log.info('Load Hi-C data')
+            set_chromosomes = cfg.get('chromosomes', 'set_chromosomes')
+            HicLoader = hicloader.HiC(hic_path,
                                   samplename,
                                   args.hic_format,
                                   args.resolution,
                                   set_chromosomes,
                                   balance = eval(cfg.get('hic', 'balance')))
                                   
-        chromsize = HicLoader(args.empty_row_imputation,
+            chromsize = HicLoader(args.empty_row_imputation,
                               args.truncation,
                               shrinkage_min = float(cfg.get('hic', 'shrinkage_min')),
                               shrinkage_max = float(cfg.get('hic', 'shrinkage_max')),
                               log2_hic = args.log2_hic)
                               
-        chrs = np.array(list(chromsize.keys()), dtype = str)
-        sizes = np.fromiter(chromsize.values(), dtype = int)
+            chrs = np.array(list(chromsize.keys()), dtype = str)
+            sizes = np.fromiter(chromsize.values(), dtype = int)
+
+            log.info('Run armatus on {} chromosomes:'.format(len(chrs)))
+            run_armatus(args, chromsize, samplename)
+
+            log.info('Calculate indexes')
+            ind, tads = tadnumeration.get_numeration(chrs, args.resolution, sizes, samplename, args.gamma_max, args.stepsize)
+
+            sample_index+=1
         
 
         log.info('Load epigenetic data')
         ChipSeqLoader = chipseqloader.ChipSeq(chipseq_path, set_chromosomes, chromsize, args.resolution)
         chip_data = ChipSeqLoader(args.log2_chip, args.zscore_chip)
-        
-        
-        log.info('Run armatus on {} chromosomes:'.format(len(chrs)))
-        run_armatus(args, chromsize, samplename)
-        
-        
-        log.info('Calculate indexes')
-        ind, tads = tadnumeration.get_numeration(chrs, args.resolution, sizes, samplename, args.gamma_max, args.stepsize)
         
         
         log.info('Calculate amplitudes')

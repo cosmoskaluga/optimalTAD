@@ -4,6 +4,7 @@ import os
 import glob
 import shutil
 import logging
+import sys
 
 log = logging.getLogger(__name__)
 
@@ -122,7 +123,7 @@ def check_chrnames(labels_config, labels):
     elif len(set(labels).intersection(labels_config)) > 0:
         chrnames = np.array(set(labels).intersection(labels_config))
     else:
-        self.log.info('Specified choromosomes are not found! Please set correct chromosome names in the configuration file.')
+        log.info('ERROR: Specified choromosomes are not found! Please set correct chromosome names in the configuration file.')
         sys.exit(1)
             
     return chrnames
@@ -139,7 +140,8 @@ def check_filenames(hic_files, chipseq_files):
         elif chipseq_files_number == 1:
             chipseq_files = np.repeat(chipseq_files, hic_files_number)
         else:
-            print("ERROR: Please provide correct number of input Hi-C and ChIP-seq files")
+            log.info("ERROR: Please provide correct number of input Hi-C and ChIP-seq files")
+            sys.exit(1)
         
     return np.array(sorted(hic_files)), np.array(sorted(chipseq_files)), np.array(sorted(samplenames))
 
