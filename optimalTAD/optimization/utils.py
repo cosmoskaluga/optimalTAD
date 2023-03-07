@@ -19,7 +19,7 @@ def optimal_gamma(data):
 
 
 def select_optimal_tads(tads, optimal_gamma, samplename):
-    dst = check_path('output/', 'optimal_gamma', samplename)
+    dst = check_path(os.path.join(os.path.realpath('.'),'output/'), 'optimal_gamma', samplename)
     merged_tads = pd.DataFrame(columns = ['Chr', 'Start', 'End'])
     for src in tads[optimal_gamma]:
         tad = pd.read_csv(src, header = None, names = ['Chr', 'Start', 'End'], sep = '\t')
@@ -33,7 +33,7 @@ def save_stairs(data, index_min, index_max, output_path):
     data = pd.DataFrame(data)
     x_val = np.arange(index_min, index_max, 1)
     data.index = x_val
-    data.to_csv(output_path, header = True, index=True)
+    data.to_csv(os.path.join(os.path.realpath('.'), output_path), header = True, index=True)
 
 
 def nan_array_comparison(func, arr, thresh):
@@ -140,7 +140,7 @@ def check_filenames(hic_files, chipseq_files):
         elif chipseq_files_number == 1:
             chipseq_files = np.repeat(chipseq_files, hic_files_number)
         else:
-            log.info("ERROR: Please provide correct number of input Hi-C and ChIP-seq files")
+            log.info("ERROR: Please provide a correct number of input Hi-C and ChIP-seq files")
             sys.exit(1)
         
     return np.array(sorted(hic_files)), np.array(sorted(chipseq_files)), np.array(sorted(samplenames))

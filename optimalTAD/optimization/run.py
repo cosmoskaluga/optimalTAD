@@ -14,7 +14,7 @@ from . import plotter
 
 
 def run_armatus(args, chromsize, samplename):
-    path = os.path.join(sys.path[0], 'output')
+    path = os.path.join(os.path.realpath('.'), 'output')
     path_to_hic = os.path.join(path, 'data', samplename + '/')
     num = 0
     for chromosome in chromsize.keys():
@@ -104,7 +104,7 @@ def main(args, cfg, log):
         print()
     
     
-    path = cfg.get('output', 'path_to_amplitude_figure') + '.' + cfg.get('output', 'figure_postfix')
+    path = os.path.join(os.path.realpath('.'), cfg.get('output', 'path_to_amplitude_figure') + '.' + cfg.get('output', 'figure_postfix'))
     plotter.plotAmplitude(df, output_path = path, dpi = cfg.getint('output', 'figure_dpi'))
 
 
@@ -113,8 +113,9 @@ def main(args, cfg, log):
                       best_gamma_array,
                       index_min = cfg.getint('stair', 'index_min'),
                       index_max = cfg.getint('stair', 'index_max'),
-                      output_path = cfg.get('output', 'path_to_best_stair_figure') + '.' + cfg.get('output', 'figure_postfix'),
+                      output_path = os.path.join(os.path.realpath('.'), 
+                                                 cfg.get('output', 'path_to_best_stair_figure') + '.' + cfg.get('output', 'figure_postfix')),
                       dpi = cfg.getint('output', 'figure_dpi'), 
-                      path_to_stair_dataframe = cfg.get('output', 'path_to_best_stair_data'))
+                      path_to_stair_dataframe = os.path.join(os.path.realpath('.'), cfg.get('output', 'path_to_best_stair_data')))
 
-    df.to_csv(cfg.get('output', 'path_to_amplitude_file'), header = True, index=False)
+    df.to_csv(os.path.join(os.path.realpath('.'), cfg.get('output', 'path_to_amplitude_file')), header = True, index=False)

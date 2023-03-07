@@ -23,7 +23,7 @@ def load_hdf5(path, samplename, set_chromosomes, fileformat, empty_row_imputatio
         labels_config = set_chromosomes.split(',')
         labels = utils.check_chrnames(labels_config, f['chromosomeLabels'][()].astype('<U5'))
     
-    path_to_output = os.path.join(sys.path[0], 'output')
+    path_to_output = os.path.join(os.path.realpath('.'), 'output')
     path_to_sample = utils.check_path(path_to_output, 'data', samplename)
     
     chromsize = {}
@@ -61,7 +61,7 @@ def get_coefficients(amin, amax, cmin, cmax):
 
 def load_cool(path, samplename, set_chromosomes, fileformat, balance, empty_row_imputation, truncation, shrinkage_min, shrinkage_max, log2_transformation):
     import cooler
-    path_to_output = os.path.join(sys.path[0], 'output')
+    path_to_output = os.path.join(os.path.realpath('.'), 'output')
     path_to_sample = utils.check_path(path_to_output, 'data', samplename)
     coolfile = cooler.Cooler(path)
     

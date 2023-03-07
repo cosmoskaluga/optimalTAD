@@ -91,8 +91,8 @@ def get_distances(data, length, chromosome, resolution):
 
 def get_numeration(chr_labels, resolution, chr_length, samplename, gamma_max, stepsize):
     chr_length = chr_length * resolution
-    input_path = 'output/tads/' + samplename
-    output_path = 'output/borders/'
+    input_path = os.path.join(os.path.realpath('.'), 'output/tads/') + samplename
+    output_path = os.path.join(os.path.realpath('.'),'output/borders/')
     tad_files = get_tad_files(input_path, chr_labels, gamma_max, stepsize)
 
     dict_md = {key: [] for key in tad_files.keys()}
