@@ -132,3 +132,7 @@ dmypy.json
 log/
 output/
 testdata/
+
+# Armatus
+armatus/build
+armatus/output
