@@ -1,23 +1,16 @@
-FROM python:3.9-slim
+FROM ubuntu:18.04
 
-MAINTAINER Dmitrii Smirnov "dmitrii.smirnov@phystech.edu"
+MAINTAINER Dmitrii Smirnov "Dmitrii.Smirnov@skoltech.edu"
 
-COPY ./setup.py /setup.py
-COPY ./config.ini /config.ini	 
+SHELL ["/bin/bash", "-c"]
 
-WORKDIR /
-
-RUN git clone https://github.com/Homebrew/brew ~/.linuxbrew/Homebrew \
-&& mkdir ~/.linuxbrew/bin \
-&& ln -s ../Homebrew/bin/brew ~/.linuxbrew/bin \
-&& eval $(~/.linuxbrew/bin/brew shellenv) \
-&& brew --version
-
-RUN brew install mpich2 
-RUN	brew install boost 
-RUN pip3 install . 
+RUN apt-get update && apt-get -y --no-install-recommends install \
+    build-essential \
+    clang \
+    cmake \
+    mpich \
+    libboost-all-dev \
+    wget
 
 
-COPY . /
 
-ENTRYPOINT ["optimalTAD"]
