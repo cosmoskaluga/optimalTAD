@@ -3,7 +3,7 @@
 cd armatus
 
 if [ "$(uname)" == "Darwin" ]; then
-    path_to_boost='/usr/local/Cellar/boost'        
+    path_to_boost='/usr/local/Cellar/boost'  # assuming that boost was installed via brew. If not, change this to the actual path to boost directory.      
 elif [ "$(expr substr $(uname -s) 1 5)" == "Linux" ]; then
     path_to_boost=$(whereis boost | awk '{print $2}')
 elif [ "$(expr substr $(uname -s) 1 10)" == "MINGW32_NT" ]; then
