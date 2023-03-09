@@ -21,13 +21,13 @@ Clone this repo and install `optimalTAD` using pip:
 ``` bash
 git clone https://github.com/cosmoskaluga/optimalTAD
 cd optimalTAD
-pip install .
+./install.sh
 ```
 
 ### Usage
 To launch the algorithm type the following at the command line:
 ```bash
-python3 -m optimalTAD run [-h] [--hic HIC [HIC ...]] [--chipseq CHIPSEQ [CHIPSEQ ...]] [--np NP] [--resolution RESOLUTION] [--stepsize STEPSIZE] [--gamma_max GAMMA_MAX] [--hic_format HIC_FORMAT] [--empty_row_imputation] [--truncation] [--log2_hic] [--log2_chip] [--zscore_chip]
+optimalTAD run [-h] [--hic HIC [HIC ...]] [--chipseq CHIPSEQ [CHIPSEQ ...]] [--np NP] [--resolution RESOLUTION] [--stepsize STEPSIZE] [--gamma_max GAMMA_MAX] [--hic_format HIC_FORMAT] [--empty_row_imputation] [--truncation] [--log2_hic] [--log2_chip] [--zscore_chip]
 ```
 
 
@@ -62,13 +62,13 @@ chmod a+x ./test_data.sh
 It will create `testdata` folder containing Hi-C and ChIP-seq data of Drosophila chromosome 2L. Next, run `optimalTAD`:
 
 ```bash
-python3 -m optimalTAD run
+optimalTAD run
 ```
     
 ### Visualizing results
 Hi-C data with the obtained optimal TAD set can be visualized using the function below:
 ```bash
-python3 -m optimalTAD visualize [-h] [--samplename SAMPLENAME] [--region REGION] [--resolution RESOLUTION] [--chipseq CHIPSEQ] [--log2_chip] [--zscore_chip] [--rnaseq RNASEQ]
+optimalTAD visualize [-h] [--samplename SAMPLENAME] [--region REGION] [--resolution RESOLUTION] [--chipseq CHIPSEQ] [--log2_chip] [--zscore_chip] [--rnaseq RNASEQ]
 ```
 
 with the following arguments:
