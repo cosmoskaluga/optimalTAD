@@ -10,7 +10,7 @@ def get_configuration():
     config = configparser.ConfigParser()
     conf_list = config.read('config.ini')
     if not conf_list:
-        log.error('Cannot opet configuration file!')
+        log.error('Cannot open configuration file!')
         sys.exit(1)
         
     return config

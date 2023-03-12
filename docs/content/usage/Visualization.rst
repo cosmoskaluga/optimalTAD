@@ -5,7 +5,7 @@ Hi-C data with the obtained optimal TAD set can be visualized using the function
 
 .. code:: bash
 
-	python3 -m optimalTAD visualize [-h] [--samplename SAMPLENAME] 
+	optimalTAD visualize [-h] [--samplename SAMPLENAME] 
 						[--region REGION] [--resolution RESOLUTION] 
 						[--chipseq CHIPSEQ] [--log2_chip] 
 						[--zscore_chip] [--rnaseq RNASEQ]

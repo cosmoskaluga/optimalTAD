@@ -5,7 +5,7 @@ To launch the algorithm  type the following at the command line:
 
 .. code:: bash
 
-	python3 -m optimalTAD run [-h] [--hic HIC [HIC ...]] [--chipseq CHIPSEQ [CHIPSEQ ...]] 
+	optimalTAD run [-h] [--hic HIC [HIC ...]] [--chipseq CHIPSEQ [CHIPSEQ ...]] 
 			[--np NP] [--resolution RESOLUTION] [--stepsize STEPSIZE] 
 			[--gamma_max GAMMA_MAX] [--hic_format HIC_FORMAT] 
 			[--empty_row_imputation] [--truncation] [--log2_hic] 

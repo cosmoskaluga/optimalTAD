@@ -15,7 +15,7 @@ It will create `testdata` folder containing Hi-C and ChIP-seq profiles of Drosop
 
 .. code:: bash
 
-	python3 -m optimalTAD run
+	optimalTAD run
 
 If everything done in a correct way, than you will see something like this in your terminal:
 
@@ -74,7 +74,7 @@ To plot Hi-C matrix along with optimal TAD set and ChIP-seq profiles, run code b
 
 .. code:: bash
 
-	python3 -m optimalTAD visualize
+	optimalTAD visualize
 
 .. image:: ../images/TADandChIPseq.png
 
