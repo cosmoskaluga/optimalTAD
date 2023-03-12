@@ -13,11 +13,13 @@ MPICH installation
 ------------------
 
 Linux:
+
 .. code:: bash
 
     $ sudo apt-get install mpich
 
 MacOS:
+
 .. code:: bash
 
     $ brew install mpich
@@ -28,11 +30,13 @@ Boost installation
 ------------------
 
 Linux:
+
 .. code:: bash
 
     $ sudo apt-get install boost
 
 MacOS:
+
 .. code:: bash
 
     $ brew install boost
