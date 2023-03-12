@@ -1,0 +1,7 @@
+/home/anna/Downloads/tads/ArmatusParallel/src/CMakeFiles/install/strip.dir
+/home/anna/Downloads/tads/ArmatusParallel/src/CMakeFiles/install/local.dir
+/home/anna/Downloads/tads/ArmatusParallel/src/CMakeFiles/install.dir
+/home/anna/Downloads/tads/ArmatusParallel/src/CMakeFiles/list_install_components.dir
+/home/anna/Downloads/tads/ArmatusParallel/src/CMakeFiles/rebuild_cache.dir
+/home/anna/Downloads/tads/ArmatusParallel/src/CMakeFiles/edit_cache.dir
+/home/anna/Downloads/tads/ArmatusParallel/src/CMakeFiles/armatus.dir

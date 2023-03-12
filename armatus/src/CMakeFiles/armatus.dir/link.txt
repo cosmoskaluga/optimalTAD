@@ -1,0 +1,1 @@
+/usr/bin/mpicxx     CMakeFiles/armatus.dir/Armatus.cpp.o CMakeFiles/armatus.dir/ArmatusUtil.cpp.o CMakeFiles/armatus.dir/ArmatusParams.cpp.o CMakeFiles/armatus.dir/ArmatusDAG.cpp.o CMakeFiles/armatus.dir/IntervalScheduling.cpp.o  -o armatus  -lz -lz 
