@@ -85,5 +85,7 @@ with the following arguments:
  
 ## Documentation
 `optimalTAD` documentation is available on [readthedocs](https://optimaltad.readthedocs.io/).
-                        
 
+## Manuscript
+Scripts reproducing the main analyses from the manuscript can be found here:
+https://github.com/cosmoskaluga/optimaltad_manuscript_analysis
