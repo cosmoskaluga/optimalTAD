@@ -7,7 +7,8 @@ import glob
 import logging
 
 from itertools import repeat
-from collections import Counter
+from collections import Counter, OrderedDict
+import collections
 from . import utils
 
 
@@ -18,9 +19,68 @@ bigwig_extensions = ['.bigwig', '.bigWig', '.BigWig', '.bw']
 
 
 
+def add_chr(dic):
+    corrected_names = ['chr'+str(s) for s in dic.keys()]
+    return {k: v for k, v in zip(corrected_names, list(dic.values()))}
+
+
+
 def equal_sizes(data, chromsize):
     data_size = dict(Counter(data.Chr.values))
+    bool_data = np.all(utils.check_prefix(data_size.keys()))
+    bool_chromsize = np.all(utils.check_prefix(chromsize.keys()))
+    if bool_data == bool_chromsize:
+        pass
+    elif not bool_data:
+        data_size = add_chr(data_size)
+    elif not bool_chromsize:
+        chromsize = add_chr(chromsize)
+
+    data_size = OrderedDict(sorted(data_size.items()))
+    chromsize = OrderedDict(sorted(chromsize.items()))
+
     return data_size == chromsize
+
+
+
+def bin_calculation(chrdata, length, chrname, resolution):
+    df = pd.DataFrame([])
+    arr = []
+    i = 0
+    start_value = 0
+    #print(chrdata.head(10))
+    while i < length*resolution:
+        d = chrdata.loc[(chrdata.Start < i+resolution) & (chrdata.Start >= i)]
+        end_values = d.End.values
+        if len(end_values) > 0:
+            last_interval = end_values[-1] - (i+resolution)
+            nbins = (end_values[-1] - d.Start.values[0])//resolution
+            if nbins > 1:
+                last_interval = last_interval%resolution
+                new_bin = d.Score.values[-1]
+            else:
+                end_values[-1] -= last_interval
+                interval_len = end_values - d.Start.values
+                binvals = d.Score.values*interval_len/resolution
+                new_bin = np.nansum(np.append(binvals, start_value))
+                nbins = 1
+            start_value = d.Score.values[-1]*last_interval/resolution
+        
+        else:
+            new_bin = np.nan
+            if i < chrdata.Start.values[0]:
+                nbins = (chrdata.Start.values[0] - i)//resolution
+            else:
+                nbins = (length*resolution - i)//resolution
+        
+        for bin_idx in range(nbins):
+            arr.append([chrname, str(i+bin_idx*resolution), str(i+resolution*(1+bin_idx)), str(new_bin)])
+        
+        i += resolution*nbins
+    
+    arr = np.reshape(arr, (i//resolution, 4))
+    
+    return arr
 
 
 
@@ -30,12 +90,13 @@ def binarize_data(data, chromsize, resolution):
         sizes = np.fromiter(chromsize.values(), dtype = int)
         for chrname, length in zip(np.unique(data.Chr.values), sizes):
             chr_data = data.loc[data.Chr == chrname]
-            arr = []
-            for i in np.arange(0, resolution*length, resolution):
-                d = chr_data.loc[(chr_data.Start < i+resolution) & (chr_data.Start >= i)]
-                arr.append([chrname, str(i), str(i+resolution), str(d.Score.mean(skipna=True))])
-
-            arr = np.reshape(arr, (length, 4))
+            #arr = []
+            #for i in np.arange(0, resolution*length, resolution):
+            #    d = chr_data.loc[(chr_data.Start < i+resolution) & (chr_data.Start >= i)]
+            #    arr.append([chrname, str(i), str(i+resolution), str(d.Score.mean(skipna=True))])
+            
+            #arr = np.reshape(arr, (length, 4))
+            arr = bin_calculation(chr_data, length, chrname, resolution)
             df = pd.concat([df, pd.DataFrame(arr)])
         data = df
         data.columns = ['Chr', 'Start', 'End', 'Score']
@@ -45,12 +106,20 @@ def binarize_data(data, chromsize, resolution):
 
 
 
-def get_bedgraph(self):
+def blacklist_subtraction(signal_data, bklst):
+    keys = list(bklst.columns.values)
+    i1 = signal_data.set_index(keys).index
+    i2 = bklst.set_index(keys).index
+    signal_data.loc[i1.isin(i2), 'Score'] = np.nan
+    return signal_data
+
+
+
+def get_bedgraph(self, blacklist_regions):
     df_chip = pd.read_csv(self.path, sep = ' ', comment = 't', header = None, names = ['Chr', 'Start', 'End', 'Score'])
 
-    if self.chrnames != ['']:
-        labels = utils.check_chrnames(self.chrnames, np.unique(df_chip.Chr))
-        df_chip = df_chip.loc[df_chip['Chr'].isin(labels)]
+    labels = utils.check_chrnames(self.chrnames, np.unique(df_chip.Chr))
+    df_chip = df_chip.loc[df_chip['Chr'].isin(labels)]
 
     df_chip = df_chip.replace('NA', 'nan')
     df_chip.replace(['inf', '-inf'], 'nan', inplace=True)
@@ -59,11 +128,14 @@ def get_bedgraph(self):
     convert_dict = {'Chr': str, 'Start': int, 'End': int, 'Score': float}
     df_chip = df_chip.astype(convert_dict)
 
+    if isinstance(blacklist_regions, pd.DataFrame):
+        df_chip = blacklist_subtraction(df_chip, blacklist_regions)
+
     return df_chip
 
 
 
-def get_bigwig_file(self):
+def get_bigwig_file(self, blacklist_regions = False):
     import pyBigWig
     bw = pyBigWig.open(self.path)
     if bw.isBigWig() == False:
@@ -84,18 +156,22 @@ def get_bigwig_file(self):
 
         convert_dict = {'Chr': str, 'Start': int, 'End': int, 'Score': float}
         df_chip = df_chip.astype(convert_dict)
+        
 
-        if self.chrnames != ['']:
-            labels = utils.check_chrnames(self.chrnames, np.unique(df_chip.Chr))
-            df_chip = df_chip.loc[df_chip['Chr'].isin(labels)]
+    labels = utils.check_chrnames(self.chrnames, np.unique(df_chip.Chr))
+    df_chip = df_chip.loc[df_chip['Chr'].isin(labels)]
+    df_chip = binarize_data(df_chip, self.chromsize, self.resolution)
 
-        df_chip = binarize_data(df_chip, self.chromsize, self.resolution)
+
+    if isinstance(blacklist_regions, pd.DataFrame):
+        df_chip = blacklist_subtraction(df_chip, blacklist_regions)
 
     return df_chip
 
 
+
 class ChipSeq:
-    def __init__(self, path, set_chromosomes, chromsize, resolution):
+    def __init__(self, path, set_chromosomes, hic_chromosomes, chromsize, resolution):
         self.path = path
         self.extension = os.path.splitext(path)[1]
         self.chromsize = chromsize
@@ -104,31 +180,32 @@ class ChipSeq:
         if set_chromosomes != 'None':
             self.chrnames = set_chromosomes.split(',')
         else:  
-            self.chrnames = ['']
+            self.chrnames = hic_chromosomes
 
         accepted_extensions = bedgraph_extensions + bigwig_extensions
         if self.extension not in accepted_extensions:
             log.error('Incompatible format of ChIP-seq file!')
             sys.exit(1)
 
-    def __call__(self, log2_chip, zscore_chip):
+    def __call__(self, log2_chip, zscore_chip, blacklist_regions = False):
         if self.extension in bedgraph_extensions:
-            df_chip = get_bedgraph(self)
+            df_chip = get_bedgraph(self, blacklist_regions)
         else:
-            df_chip = get_bigwig_file(self)
+            df_chip = get_bigwig_file(self, blacklist_regions)
+
+        score = df_chip.Score.values.astype(float)
+        bool_arr = utils.nan_array_comparison(np.less, score, 1e-10)
+        score[bool_arr] = np.nan
+        df_chip.Score = score
         
         if log2_chip:
             score = df_chip.Score.values
-            bool_arr = utils.nan_array_comparison(np.less, score, 1e-10)
-            score[bool_arr] = np.nan
-            df_chip.Score = np.log2(df_chip.Score.values)
+            df_chip.Score = np.log2(score)
             df_chip = df_chip.replace(np.inf, np.nan)
         
         if zscore_chip:
             df_chip.Score = (df_chip.Score - df_chip.Score.mean()) / df_chip.Score.std(ddof=0)
 
         return df_chip
-
-
 
 

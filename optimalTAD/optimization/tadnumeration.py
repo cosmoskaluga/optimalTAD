@@ -4,6 +4,9 @@ import sys
 import os
 import glob
 import logging
+import math
+
+from collections import Counter
 
 log = logging.getLogger(__name__)
 
@@ -48,13 +51,14 @@ def numeration(size, interaction_type = 'tad'):
 
 
 def columns(first_col, second_col, start, end, resolution, interaction_type = 'tad'):
+    end  = resolution*math.ceil(end/resolution)
     size = (end-start)/resolution
     col1 = np.arange(start, end, resolution)
     
     if interaction_type != 'skip':
         col2 = numeration(int(size), interaction_type).astype(str)
     else:
-        col2 = np.repeat(np.nan, size)
+        col2 = np.repeat(np.nan, math.ceil(size))
 
     first_col = np.append(first_col, col1)
     second_col = np.append(second_col, col2)
@@ -62,7 +66,7 @@ def columns(first_col, second_col, start, end, resolution, interaction_type = 't
 
 
 
-def get_distances(data, length, chromosome, resolution):
+def get_distances(data, length, chromosome, resolution, is_mammal = False):
     first_col = np.array([])
     second_col = np.array([])
     
@@ -73,7 +77,11 @@ def get_distances(data, length, chromosome, resolution):
     bp = start_bin
 
     for row in data:
-        start_bin, end_bin = row[1], row[2] + 1
+        if is_mammal:
+            start_bin, end_bin = row[1], row[2]
+        else:
+            start_bin, end_bin = row[1], row[2] + 1
+
         if bp != start_bin:
             first_col, second_col = columns(first_col, second_col, bp, start_bin, resolution, interaction_type = 'intertad')
         first_col, second_col = columns(first_col, second_col, start_bin, end_bin, resolution, interaction_type = 'tad')
@@ -81,7 +89,7 @@ def get_distances(data, length, chromosome, resolution):
 
     if (length > bp):
         start, end = bp, length
-        first_col, second_col = columns(first_col, second_col, bp, end, resolution, interaction_type = 'skip')
+        first_col, second_col = columns(first_col, second_col, start, end, resolution, interaction_type = 'skip')
     
     labels = np.repeat([chromosome], len(first_col))
     out = np.vstack((labels, first_col.astype(int), second_col))
@@ -118,8 +126,31 @@ def get_numeration(chr_labels, resolution, chr_length, samplename, gamma_max, st
     if chrs_counter == 0:
         log.error('There are no TADs identified across resolutions and replicates of Hi-C data!')
         sys.exit(1)
-
     return dict_md, tad_files
+
+
+
+def get_numeration_mammal(tad_files, resolution):
+    chr_sizes = np.array([])
+    first_tad_set = tad_files[list(tad_files.keys())[0]]
+    chr_names = first_tad_set.Chr.unique()
+    for chr_name in chr_names:
+        chr_sizes = np.append(chr_sizes, first_tad_set.loc[first_tad_set.Chr == chr_name].End.max())
+
+    dict_md = {key: [] for key in tad_files.keys()}
+    for window_size in tad_files.keys():
+        df = pd.DataFrame()
+        d = tad_files[window_size]
+        lbl_total = chr_names
+        for length, label in zip(chr_sizes, chr_names):
+            markdown = get_distances(d.loc[d['Chr'] == label].values, length, label, resolution, is_mammal = True)
+            df_chr = pd.DataFrame(markdown)
+            df = pd.concat([df, df_chr])
+    
+        dict_md[window_size].append(df.values)
+        dict_md[window_size].append(lbl_total)
+
+    return dict_md, dict(Counter(dict_md[window_size][0][:,0]))
 
 
 

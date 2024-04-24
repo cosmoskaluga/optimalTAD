@@ -18,14 +18,18 @@ def optimal_gamma(data):
     return round(gamma[maxindex], 2)
 
 
-def select_optimal_tads(tads, optimal_gamma, samplename):
+def select_optimal_tads(tads, optimal_gamma, samplename, mammal = False):
     dst = check_path(os.path.join(os.path.realpath('.'),'output/'), 'optimal_gamma', samplename)
-    merged_tads = pd.DataFrame(columns = ['Chr', 'Start', 'End'])
-    for src in tads[optimal_gamma]:
-        tad = pd.read_csv(src, header = None, names = ['Chr', 'Start', 'End'], sep = '\t')
-        tad = tad[::-1]
-        tad.End += 1
-        merged_tads = pd.concat([merged_tads, tad])
+    if not mammal:
+        merged_tads = pd.DataFrame(columns = ['Chr', 'Start', 'End'])
+        for src in tads[optimal_gamma]:
+            tad = pd.read_csv(src, header = None, names = ['Chr', 'Start', 'End'], sep = '\t')
+            tad = tad[::-1]
+            tad.End += 1
+            merged_tads = pd.concat([merged_tads, tad])
+    else:
+        merged_tads = tads[optimal_gamma]
+
     merged_tads.to_csv(dst + 'domains.tad', header = True, index = False)
 
 

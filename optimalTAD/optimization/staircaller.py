@@ -4,7 +4,7 @@ import numpy as np
 import pandas as pd
 
 
-def get_stairs(index_data, chip_data, index_min = -5, index_max = 5, acetyl_min = -3, acetyl_max = 5):
+def get_stairs(index_data, df_chip, index_min = -5, index_max = 5, acetyl_min = -3, acetyl_max = 5, mammals = False):
     kb_list = np.arange(index_min, index_max, 1)
     gamma_range = index_data.keys()
     dict_amplitudes = {key: None for key in gamma_range}
@@ -16,9 +16,8 @@ def get_stairs(index_data, chip_data, index_min = -5, index_max = 5, acetyl_min 
         df_dist = pd.DataFrame(index_data[gamma][0], columns = ['Chr', 'Bp', 'Index'])
         chromosomes = index_data[gamma][1]
 
-        
-        df_dist = df_dist.loc[df_dist['Chr'].isin(chromosomes)]
-        df_chip = chip_data.loc[chip_data['Chr'].isin(chromosomes)]
+        #df_dist = df_dist.loc[df_dist['Chr'].isin(chromosomes)]
+        #df_chip = chip_data.loc[chip_data['Chr'].isin(chromosomes)]
         
         df_dist = df_dist.astype(convert_dist)
         df_chip = df_chip.astype(convert_chip)
@@ -32,7 +31,7 @@ def get_stairs(index_data, chip_data, index_min = -5, index_max = 5, acetyl_min 
         median_val = []
         interTAD = []
         TAD = []
-        
+
         for idx in kb_list:
             row = df_dist.loc[df_dist.Index == str(idx)]
             if row.empty == False:
@@ -46,11 +45,17 @@ def get_stairs(index_data, chip_data, index_min = -5, index_max = 5, acetyl_min 
                     median_val.append(np.nan)
                 else:
                     median_val.append(np.median(acetyl_val))
-                
-                if idx <= -1:
+
+                if mammals:
+                    border_bin = 1
+                else: 
+                    border_bin = 0
+
+                if idx < border_bin:
                     interTAD = np.append(interTAD, acetyl_val)
-                if idx >= 0:
+                if idx >= border_bin:
                     TAD = np.append(TAD, acetyl_val)
+               
             else:
                 median_val.append(np.nan)
         
@@ -59,6 +64,4 @@ def get_stairs(index_data, chip_data, index_min = -5, index_max = 5, acetyl_min 
         dict_amplitudes[gamma] = amplitude
     
     return dict_stairs, dict_amplitudes
-
-
 

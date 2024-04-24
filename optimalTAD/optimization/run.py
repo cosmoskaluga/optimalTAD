@@ -4,6 +4,7 @@ import sys
 import os
 import numpy as np
 import pandas as pd
+import cooler
 
 from . import hicloader, chipseqloader
 from . import tadcaller
@@ -11,25 +12,6 @@ from . import tadnumeration
 from . import staircaller
 from . import utils
 from . import plotter
-
-
-def run_armatus(args, chromsize, samplename):
-    path = os.path.join(os.path.realpath('.'), 'output')
-    path_to_hic = os.path.join(path, 'data', samplename + '/')
-    num = 0
-    for chromosome in chromsize.keys():
-        utils.progressbar(num, len(chromsize.keys()))
-        path_to_file = os.path.join(path_to_hic, chromosome + '.' + args.hic_format)
-        armatus_output = utils.check_path(path, 'tads/' + samplename, chromosome)
-        caller = tadcaller.armatus(args.np,
-                                   args.resolution,
-                                   path_to_file,
-                                   args.gamma_max,
-                                   args.stepsize,
-                                   armatus_output,
-                                   chromosome)
-        num += 1
-    utils.progressbar(num, len(chromsize.keys()))
 
 
 def main(args, cfg, log):
@@ -45,37 +27,43 @@ def main(args, cfg, log):
         log.info('\033[1m' + 'Samplename: ' + samplename + '\033[0m')
     
         if sample_index < len(np.unique(hic_files)):        
-            log.info('Load Hi-C data')
             set_chromosomes = cfg.get('chromosomes', 'set_chromosomes')
-            HicLoader = hicloader.HiC(hic_path,
-                                  samplename,
-                                  args.hic_format,
-                                  args.resolution,
-                                  set_chromosomes,
-                                  balance = eval(cfg.get('hic', 'balance')))
+            if not args.mammal:
+                log.info('Load Hi-C data')
+                HicLoader = hicloader.HiC(hic_path,
+                                        samplename,
+                                        args.hic_format,
+                                        args.resolution,
+                                        set_chromosomes,
+                                        balance = eval(cfg.get('hic', 'balance')))
                                   
-            chromsize = HicLoader(args.empty_row_imputation,
-                              args.truncation,
-                              shrinkage_min = float(cfg.get('hic', 'shrinkage_min')),
-                              shrinkage_max = float(cfg.get('hic', 'shrinkage_max')),
-                              log2_hic = args.log2_hic)
+                chromsize = HicLoader(args.empty_row_imputation,
+                                    args.truncation,
+                                    shrinkage_min = float(cfg.get('hic', 'shrinkage_min')),
+                                    shrinkage_max = float(cfg.get('hic', 'shrinkage_max')),
+                                    log2_hic = args.log2_hic)
                               
-            chrs = np.array(list(chromsize.keys()), dtype = str)
-            sizes = np.fromiter(chromsize.values(), dtype = int)
+                chrs = np.array(list(chromsize.keys()), dtype = str)
+                sizes = np.fromiter(chromsize.values(), dtype = int)
 
-            log.info('Run armatus on {} chromosomes:'.format(len(chrs)))
-            run_armatus(args, chromsize, samplename)
+                log.info('Run armatus on {} chromosomes:'.format(len(chrs)))
+                tadcaller.run_armatus(args, chromsize, samplename)
 
-            log.info('Calculate indexes')
-            ind, tads = tadnumeration.get_numeration(chrs, args.resolution, sizes, samplename, args.gamma_max, args.stepsize)
+                log.info('Calculate indexes')
+                ind, tads = tadnumeration.get_numeration(chrs, args.resolution, sizes, samplename, args.gamma_max, args.stepsize)
+                blacklist = False
+            else:
+                log.info('Load Hi-C data and detect boundaries using IS method:')
+                tads, blacklist = tadcaller.run_IS(path = hic_path, args = args, set_chromosomes = set_chromosomes)
+                ind, chromsize = tadnumeration.get_numeration_mammal(tads, args.resolution)
 
             sample_index+=1
-        
 
         log.info('Load epigenetic data')
-        ChipSeqLoader = chipseqloader.ChipSeq(chipseq_path, set_chromosomes, chromsize, args.resolution)
-        chip_data = ChipSeqLoader(args.log2_chip, args.zscore_chip)
+        ChipSeqLoader = chipseqloader.ChipSeq(chipseq_path, set_chromosomes, list(chromsize.keys()), chromsize, args.resolution)
+        chip_data = ChipSeqLoader(args.log2_chip, args.zscore_chip, blacklist)
         
+        chip_data.to_csv("~/Documents/chip_data.csv", header = True, index=False)
         
         log.info('Calculate amplitudes')
         stairs, amplitudes = staircaller.get_stairs(ind,
@@ -83,9 +71,16 @@ def main(args, cfg, log):
                                                     index_min = cfg.getint('stair', 'index_min'),
                                                     index_max = cfg.getint('stair', 'index_max'),
                                                     acetyl_min = cfg.getint('stair', 'acetyl_min'),
-                                                    acetyl_max = cfg.getint('stair', 'acetyl_max'))
+                                                    acetyl_max = cfg.getint('stair', 'acetyl_max'), 
+                                                    mammals = args.mammal)
             
         df_sample = pd.DataFrame(amplitudes.items(), columns = ['Gamma', samplename])
+        if args.mammal:
+            df_sample.Gamma = df_sample.Gamma.astype(int)
+            df_sample = df_sample.sort_values(by=['Gamma'])
+            tads = {int(k):v for k,v in tads.items()}
+            stairs = {int(k):v for k,v in stairs.items()}
+
         best_gamma = utils.optimal_gamma(df_sample)
         log.info('The optimal gamma for {} is {}'.format(samplename, best_gamma))
         
@@ -94,8 +89,9 @@ def main(args, cfg, log):
                             index_max = cfg.getint('stair', 'index_max'), 
                             output_path = cfg.get('output', 'path_to_stair_data'))
 
-        utils.select_optimal_tads(tads, best_gamma, samplename)
-        
+
+        utils.select_optimal_tads(tads, best_gamma, samplename, mammal = args.mammal)
+
         stair_dict[samplename] = stairs[best_gamma]
         best_gamma_array.append(best_gamma)
         

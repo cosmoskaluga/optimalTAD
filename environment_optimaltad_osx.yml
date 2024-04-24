@@ -1,0 +1,23 @@
+name: optimaltad
+channels:
+  - conda-forge
+  - defaults
+  - bioconda
+dependencies:
+  - mpich
+  - boost
+  - clangxx_osx-64
+  - python=3.9
+  - pip=22.2
+  - pip:
+    - scipy
+    - pandas
+    - matplotlib
+    - seaborn
+    - numpy
+    - h5py
+    - cooler
+    - pyBigWig
+    - bioframe
+    - numba
+    - cooltools
