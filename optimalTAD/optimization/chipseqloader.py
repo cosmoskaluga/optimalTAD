@@ -116,7 +116,7 @@ def blacklist_subtraction(signal_data, bklst):
 
 
 def get_bedgraph(self, blacklist_regions):
-    df_chip = pd.read_csv(self.path, sep = ' ', comment = 't', header = None, names = ['Chr', 'Start', 'End', 'Score'])
+    df_chip = pd.read_csv(self.path, sep = '\s+', comment = 't', header = None, names = ['Chr', 'Start', 'End', 'Score'])
 
     labels = utils.check_chrnames(self.chrnames, np.unique(df_chip.Chr))
     df_chip = df_chip.loc[df_chip['Chr'].isin(labels)]
