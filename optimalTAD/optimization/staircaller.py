@@ -5,6 +5,32 @@ import pandas as pd
 
 
 def get_stairs(index_data, df_chip, index_min = -5, index_max = 5, acetyl_min = -3, acetyl_max = 5, mammals = False):
+    """ Calculating the difference in ChIP-seq signal between inter-TAD and TAD regions.
+        
+        Parameters
+        ----------
+        ``index_data`` : dataframe
+            A dataframe consisting of the distances (=indexes) to the nearest TAD boundaries from each bin.
+        ``df_chip`` : dataframe
+            A dataframe with corresponding ChIP-seq signal 
+        ``index_min`` : int
+            Minimal distance value to consider while calculating median of ChIP-seq signal
+        ``index_max`` : int
+            Maximal distance value to consider while calculating median of ChIP-seq signal
+        ``acetyl_min`` : int
+            A lower threshold for a scaled ChIP-seq signal 
+        ``acetyl_max`` : int
+            An upper threshold for a scaled ChIP-seq signal 
+        ``mammals`` : bool
+            Telling the algorithm that the data corresponds to mammalian chromatin
+        
+        Returns
+        -------
+        ``dict_stairs`` : dict
+            Median ChIP-seq values per each index used (per each distance to the nearest TAD boundary)
+        ``dict_amplitudes`` : dict
+            Difference in median ChIP-seq value between inter-TADs and TADs for each value of the optimized parameter 
+    """
     kb_list = np.arange(index_min, index_max, 1)
     gamma_range = index_data.keys()
     dict_amplitudes = {key: None for key in gamma_range}

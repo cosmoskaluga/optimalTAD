@@ -1,7 +1,18 @@
 import numpy as np
 
 def diagonal_interpolation(data):
-    #zeroidx = np.where(~data.any(axis=1))[0]
+    """ Diagonal interpolation to impute missing bins in Hi-C data. Currently, tested with armatus only
+        
+        Parameters
+        ----------
+        ``data`` : np.ndarray
+            A Hi-C matrix with empty lines  
+        
+        Returns
+        -------
+        np.ndarray
+            An imputed Hi-C matrix
+    """
     
     if np.any(np.isnan(data) == True):
         bool_matrix = np.isnan(data, dtype = bool)

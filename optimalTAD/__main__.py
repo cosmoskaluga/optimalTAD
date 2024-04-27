@@ -24,6 +24,7 @@ The basic optimalTAD commands are:
         parser.add_argument('command', default = self.cfg.get('basic', 'mode'), help='Subcommand to run')
         parser.add_argument('-v', '--version', action='version', version='optimalTAD 0.1.0')
         args = parser.parse_args(sys.argv[1:2])
+        print(args.command)
 
         arg = sys.argv[1:2]
         if arg:
@@ -58,8 +59,8 @@ The basic optimalTAD commands are:
         parser.add_argument('--log2_chip', action = 'store_true', help = 'log2 transformation of input ChIP-Seq track')
         parser.add_argument('--zscore_chip', action = 'store_true', help = 'Z-score transformation of ChIP-Seq track')
         parser.add_argument('--mammal', action = 'store_true', help = 'Input data is derived from mammalian species')
-        parser.add_argument('--window_size_min', type = int, default = 40000, help = 'Minimal window size in insulation score method (for mammals only!)')
-        parser.add_argument('--window_size_max', type = int, default = 120000, help = 'Maximal window size in insulation score method (for mammals only!)')
+        parser.add_argument('--window_size_min', type = int, default = 40000, help = 'Minimal window size in the IS method (for mammals only!)')
+        parser.add_argument('--window_size_max', type = int, default = 120000, help = 'Maximal window size in the IS method (for mammals only!)')
         parser.set_defaults(empty_row_imputation = eval(self.cfg['run']['empty_row_imputation']))
         parser.set_defaults(truncation = eval(self.cfg['run']['truncation']))
         parser.set_defaults(log2_hic = eval(self.cfg['run']['log2_hic']))

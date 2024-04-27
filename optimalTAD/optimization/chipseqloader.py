@@ -20,12 +20,38 @@ bigwig_extensions = ['.bigwig', '.bigWig', '.BigWig', '.bw']
 
 
 def add_chr(dic):
+    """ Adding 'chr' prefix to chromosome names.
+        
+        Parameters
+        ----------
+        ``dic`` : dictionary
+            A dictionary containing chromosome-size pairs
+        
+        Returns
+        -------
+        dict
+            A dictionary with corrected chromosome names (chr1, chr2, etc)
+    """
     corrected_names = ['chr'+str(s) for s in dic.keys()]
     return {k: v for k, v in zip(corrected_names, list(dic.values()))}
 
 
 
 def equal_sizes(data, chromsize):
+    """ Checking whether bin sizes are equal in Hi-C and ChIP-seq data.
+        
+        Parameters
+        ----------
+        ``data`` : dataframe
+            ChIP-seq signal
+        ``chromsize`` : dictionary
+            Chromosome sizes obtained from Hi-C data
+        
+        Returns
+        -------
+        bool
+            True or False
+    """
     data_size = dict(Counter(data.Chr.values))
     bool_data = np.all(utils.check_prefix(data_size.keys()))
     bool_chromsize = np.all(utils.check_prefix(chromsize.keys()))
@@ -44,11 +70,28 @@ def equal_sizes(data, chromsize):
 
 
 def bin_calculation(chrdata, length, chrname, resolution):
+    """ ChIP-seq signal re-aggregation within a given genomic interval (=Hi-C map resolution).
+        
+        Parameters
+        ----------
+        ``chrdata`` : dataframe
+            ChIP-seq signal
+        ``length`` : int
+            Chromosome length
+        ``chrname`` : str
+            Chromosome name
+        ``resolution`` : int
+            Desired bin size (equal to Hi-C map resolution)
+        
+        Returns
+        -------
+        np.ndarray
+            Binarized ChIP-seq signal for a chromosome 
+    """
     df = pd.DataFrame([])
     arr = []
     i = 0
     start_value = 0
-    #print(chrdata.head(10))
     while i < length*resolution:
         d = chrdata.loc[(chrdata.Start < i+resolution) & (chrdata.Start >= i)]
         end_values = d.End.values
@@ -85,6 +128,22 @@ def bin_calculation(chrdata, length, chrname, resolution):
 
 
 def binarize_data(data, chromsize, resolution):
+    """ ChIP-seq signal re-aggregation within a given genomic interval (=Hi-C map resolution).
+        
+        Parameters
+        ----------
+        ``data`` : dataframe
+            ChIP-seq signal
+        ``chromsize`` : dictionary
+            Chromosome sizes obtained from Hi-C data
+        ``resolution`` : int
+            Desired bin size (equal to Hi-C map resolution)
+        
+        Returns
+        -------
+        dataframe
+            Binarized ChIP-seq signal
+    """
     if equal_sizes(data, chromsize) != True:
         df = pd.DataFrame([])
         sizes = np.fromiter(chromsize.values(), dtype = int)
@@ -107,6 +166,21 @@ def binarize_data(data, chromsize, resolution):
 
 
 def blacklist_subtraction(signal_data, bklst):
+    """ Assigning nan values to blacklist bins.
+        
+        Parameters
+        ----------
+        ``signal_data`` : dataframe
+            ChIP-seq signal
+        ``blklst`` : dataframe
+            Dataframe consisting of blacklist regions coordinates 
+        
+        Returns
+        -------
+        dataframe
+            ChIP-seq signal with nans for blacklist regions
+    """
+
     keys = list(bklst.columns.values)
     i1 = signal_data.set_index(keys).index
     i2 = bklst.set_index(keys).index
@@ -115,7 +189,19 @@ def blacklist_subtraction(signal_data, bklst):
 
 
 
-def get_bedgraph(self, blacklist_regions):
+def get_bedgraph(self, blacklist_regions = False):
+    """ Read data from bedgraph file 
+        
+        Parameters
+        ----------
+        ``blacklist_regions`` : dataframe
+            Dataframe consisting of blacklist regions coordinates (default False)
+        
+        Returns
+        -------
+        dataframe
+            Processed and binarized (if needed) ChIP-seq signal
+    """
     df_chip = pd.read_csv(self.path, sep = '\s+', comment = 't', header = None, names = ['Chr', 'Start', 'End', 'Score'])
 
     labels = utils.check_chrnames(self.chrnames, np.unique(df_chip.Chr))
@@ -136,6 +222,18 @@ def get_bedgraph(self, blacklist_regions):
 
 
 def get_bigwig_file(self, blacklist_regions = False):
+    """ Read data from bigwig file 
+        
+        Parameters
+        ----------
+        ``blacklist_regions`` : dataframe
+            Dataframe consisting of blacklist regions coordinates (default False)
+        
+        Returns
+        -------
+        dataframe
+            Processed and binarized (if needed) ChIP-seq signal
+    """    
     import pyBigWig
     bw = pyBigWig.open(self.path)
     if bw.isBigWig() == False:

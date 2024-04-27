@@ -7,6 +7,25 @@ from . import utils
 
 
 def armatus(np, resolution, path_to_data, gamma_max, stepsize, output, chromosome):
+    """ Executing armatus from the terminal 
+        
+        Parameters
+        ----------
+        ``np`` : int
+            Number of processors (=1)
+        ``resolution`` : int
+            Resolution of Hi-C matrices 
+        ``path_to_data`` : str
+            Path to input Hi-C matrices
+        ``gamma_max`` : int
+            Max value of the gamma parameter (=4)
+        ``stepsize`` : float
+            Step size to increment gamma parameter in Armatus (=0.05) 
+        ``output`` : str
+            Path to write a file with called TAD borders 
+        ``chromosome`` : str
+            Chromosome name
+    """
     path_to_output = os.path.join(output, 'armatus')
     #path_to_armatus = 'armatus'
     path_to_armatus = os.path.join(os.path.dirname( __file__ ), '..', 'armatus')
@@ -22,6 +41,17 @@ def armatus(np, resolution, path_to_data, gamma_max, stepsize, output, chromosom
 
 
 def run_armatus(args, chromsize, samplename):
+    """ Confiuring output path and running armatus
+        
+        Parameters
+        ----------
+        ``args`` : configparcer-like object
+            Settings from input config file
+        ``chromsize`` : dict
+            A dictionary containing chromosome names and sizes 
+        ``samplename`` : str
+            A name of the input sample
+    """
     path = os.path.join(os.path.realpath('.'), 'output')
     path_to_hic = os.path.join(path, 'data', samplename + '/')
     num = 0
@@ -42,6 +72,20 @@ def run_armatus(args, chromsize, samplename):
 
 
 def ins_table2tads(ins):
+    """ Converting IS boundary table into TAD intervals.
+        
+        Parameters
+        ----------
+        ``ins`` : dataframe
+            IS output table
+        
+        Returns
+        -------
+        ``tad_files`` : dict
+            TAD intervals per window size
+        ``blacklist`` : dataframe
+            A dataframe with the coordinates of bad bins 
+    """
     list_of_sizes = [i for i in ins.columns if i.find('is_boundary') == 0]
 
     for size in list_of_sizes:
@@ -66,6 +110,32 @@ def ins_table2tads(ins):
 
 
 def run_IS(path, args, set_chromosomes, ignore_diags = None, clr_weight_name = "weight", min_frac_valid_pixels = 0.66, min_dist_bad_bin = 0, verbose = True):
+    """ Running IS function on input Hi-C data.
+        
+        Parameters
+        ----------
+        ``path`` : str
+            A path to the input cooler file
+        ``args`` : configparcer-like object
+            Settings from config.ini file
+        ``set_chromosomes`` : str
+            Tells the algorithm to select specific chromosomes for further analysis (=None)
+        ``ignore_diags`` : 
+            Tells IS algorithm the number of main diagonals to drop (=None)
+        ``min_frac_valid_pixels`` : float 
+            An implicit cooltools parameter
+        ``min_dist_bad_bin`` : int
+            An implicit cooltools parameter
+        ``verbose`` : bool
+            Silent mode in IS function (False)
+        
+        Returns
+        -------
+        ``tad_files`` : dict
+            TAD intervals per window size
+        ``blacklist`` : dataframe
+            A dataframe with the coordinates of bad bins 
+    """
     from numba.core.errors import NumbaDeprecationWarning, NumbaPendingDeprecationWarning
     import warnings
     warnings.simplefilter('ignore', category = NumbaDeprecationWarning)

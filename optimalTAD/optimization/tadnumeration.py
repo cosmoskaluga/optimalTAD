@@ -12,6 +12,18 @@ log = logging.getLogger(__name__)
 
 
 def sort_files(arr):
+    """ Sorting the array of the gamma values used in armatus
+        
+        Parameters
+        ----------
+        ``arr`` : np.array
+            An array of armatus output file names 
+        
+        Returns
+        -------
+        np.array
+            An array of sorted gamma values
+    """
     arr = np.array(arr)
     gamma_list = np.array([])
     for i in arr:

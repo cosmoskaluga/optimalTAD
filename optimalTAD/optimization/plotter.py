@@ -8,6 +8,14 @@ from matplotlib.ticker import ScalarFormatter, AutoMinorLocator
 
 
 def stylize_axes(ax):
+    """ 
+        Mtplotlib axes settings  
+
+        Parameters 
+        ----------
+        ``ax`` : matplotlib-like object
+            An object containing the matplotlib figure 
+    """
     ax.yaxis.major.formatter._useMathText = True
     ax.spines['top'].set_visible(False)
     ax.spines['right'].set_visible(False)
@@ -17,6 +25,23 @@ def stylize_axes(ax):
 
 
 def plotAmplitude(data, output_path = 'amplitude.png', dpi = 200):
+    """ 
+        Plotting a difference in median ChIP-seq value between inter-TADs and TADs for each value of the optimized parameter 
+
+        Parameters 
+        ----------
+        ``data`` : dataframe
+            A dataframe of delta h differences in median ChIP-seq signal per gamma (armatus) or window size (IS)
+        ``output_path`` : int
+            A path to save figure 
+        ``dpi`` : int
+            Figure resolution 
+        
+        Returns
+        -------
+        ``ax`` : matplotlib-like object
+            An object containing the generated amplitude figure 
+    """
     sns.set_palette(sns.color_palette('Set1'))
     samples = data.columns[1:]
     x_val = data.Gamma
@@ -42,6 +67,31 @@ def plotAmplitude(data, output_path = 'amplitude.png', dpi = 200):
 
 
 def plotStair(stair_df, best_gamma, index_min = -5, index_max = 5, output_path = 'stair.png', dpi = 200, path_to_stair_dataframe = None):
+    """ 
+        Plotting median ChIP-seq values per each distance to a TAD boundary
+
+        Parameters 
+        ----------
+        ``stair_df`` : dataframe
+            Median ChIP-seq values per each index used (per each distance to the nearest TAD boundary)
+        ``best_gamma`` : dataframe
+            Optimized value of the gamma (armatus) or window size (IS) parameter
+        ``index_min`` : int
+            Minimal distance value to consider while calculating median of ChIP-seq signal
+        ``index_max`` : ind
+            Maximal distance value to consider while calculating median of ChIP-seq signal
+        ``output_path`` : str
+            A path to save figure 
+        ``dpi`` : int
+            Figure resolution 
+        ``path_to_stair_dataframe`` : str
+            A path to save the dataframe 
+        
+        Returns
+        -------
+        ``ax`` : matplotlib-like object
+            An object containing the generated stair figure 
+    """
     sns.set_palette(sns.color_palette('Set1'))
     fig, ax = plt.subplots(figsize=(9, 7))
     for name, gamma in zip(list(stair_df.keys()), best_gamma):
