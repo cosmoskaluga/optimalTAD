@@ -19,7 +19,7 @@ import furo
 # -- Project information -----------------------------------------------------
 
 project = 'optimalTAD'
-copyright = '2019-2021, Dmitrii Smirnov, Ekaterina Khrameeva'
+copyright = '2019-2024, Dmitrii Smirnov, Ekaterina Khrameeva'
 author = 'Dmitrii Smirnov'
 
 # The full version, including alpha/beta/rc tags
