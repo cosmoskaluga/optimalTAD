@@ -2,6 +2,17 @@ import os
 import sys
 import numpy as np
 import pandas as pd
+from scipy.stats import bootstrap
+from scipy.stats import norm
+
+
+def deltaH_statistic(interTAD, TAD, axis=-1):
+    return np.median(interTAD, axis=axis) - np.median(TAD, axis=axis)
+
+
+def get_bootstraps(data, statistic):
+    rng = np.random.default_rng()
+    return bootstrap(data, statistic, method='basic', random_state=rng, n_resamples=1000)
 
 
 def get_stairs(index_data, df_chip, index_min = -5, index_max = 5, acetyl_min = -3, acetyl_max = 5, mammals = False):
@@ -31,6 +42,9 @@ def get_stairs(index_data, df_chip, index_min = -5, index_max = 5, acetyl_min = 
         ``dict_amplitudes`` : dict
             Difference in median ChIP-seq value between inter-TADs and TADs for each value of the optimized parameter 
     """
+    np.save('test_index_data.npy', index_data)
+    df_chip.to_csv("test_df_chip.csv")
+
     kb_list = np.arange(index_min, index_max, 1)
     gamma_range = index_data.keys()
     dict_amplitudes = {key: None for key in gamma_range}
@@ -81,13 +95,13 @@ def get_stairs(index_data, df_chip, index_min = -5, index_max = 5, acetyl_min = 
                     interTAD = np.append(interTAD, acetyl_val)
                 if idx >= border_bin:
                     TAD = np.append(TAD, acetyl_val)
-               
             else:
                 median_val.append(np.nan)
         
-        amplitude = np.median(interTAD) - np.median(TAD)
+        amplitude = deltaH_statistic(interTAD, TAD)
+        res = get_bootstraps((interTAD, TAD), deltaH_statistic)
         dict_stairs[gamma] = np.array(median_val)
-        dict_amplitudes[gamma] = amplitude
+        dict_amplitudes[gamma] = [gamma, amplitude, res.confidence_interval.low, res.confidence_interval.high]
     
     return dict_stairs, dict_amplitudes
 

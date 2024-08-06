@@ -74,7 +74,11 @@ def main(args, cfg, log):
                                                     acetyl_max = cfg.getint('stair', 'acetyl_max'), 
                                                     mammals = args.mammal)
             
-        df_sample = pd.DataFrame(amplitudes.items(), columns = ['Gamma', samplename])
+        #df_sample = pd.DataFrame(amplitudes.items(), columns = ['Gamma', samplename])
+        df_sample = pd.DataFrame(list(amplitudes.values()), columns = ['Gamma', 
+                                                         samplename, 
+                                                         samplename + '_CI_lower', 
+                                                         samplename + '_CI_upper'])
         if args.mammal:
             df_sample.Gamma = df_sample.Gamma.astype(int)
             df_sample = df_sample.sort_values(by=['Gamma'])

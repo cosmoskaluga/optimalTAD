@@ -10,10 +10,9 @@ log = logging.getLogger(__name__)
 
 
 def optimal_gamma(data):
-    samples = data.columns[1:]
+    samples = data.columns[1]
     gamma = data.Gamma
-    for sample in samples:
-        maxindex = data[sample].idxmax()
+    maxindex = data[samples].idxmax()
     
     return round(gamma[maxindex], 2)
 

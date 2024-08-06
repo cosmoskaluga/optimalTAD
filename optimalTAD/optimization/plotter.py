@@ -43,13 +43,17 @@ def plotAmplitude(data, output_path = 'amplitude.png', dpi = 200):
             An object containing the generated amplitude figure 
     """
     sns.set_palette(sns.color_palette('Set1'))
-    samples = data.columns[1:]
+    ci_df = data.filter(like='CI', axis=1)
+    sample_df = data.drop(list(data.filter(like='CI', axis=1).columns), axis=1)
     x_val = data.Gamma
     
     fig, ax = plt.subplots(figsize=(9, 7))
-    for sample in samples:
+    color_list = list(sns.color_palette("pastel", n_colors = len(sample_df.columns[1:])).as_hex())
+    for sample, color in zip(sample_df.columns[1:], color_list):
         y_val = data[sample].values
-        ax.plot(x_val, y_val, linewidth = 2.5, ls='--', color = 'steelblue', marker='o', label = sample)
+        ax.plot(x_val, y_val, linewidth = 2.5, ls = '--', color = color, marker = 'o', label = sample)
+        ci_df_sample = ci_df.filter(like=sample, axis=1)
+        ax.fill_between(x_val, ci_df_sample.iloc[:,0], ci_df_sample.iloc[:,1], color = color, alpha = .15)
 
     ax.set_xlabel('Gamma', fontsize = 20)
     ax.set_ylabel('Amplitude', fontsize = 20)
@@ -94,7 +98,8 @@ def plotStair(stair_df, best_gamma, index_min = -5, index_max = 5, output_path =
     """
     sns.set_palette(sns.color_palette('Set1'))
     fig, ax = plt.subplots(figsize=(9, 7))
-    for name, gamma in zip(list(stair_df.keys()), best_gamma):
+    color_list = list(sns.color_palette("pastel", n_colors = len(list(stair_df.keys()))).as_hex())
+    for name, gamma, color in zip(list(stair_df.keys()), best_gamma, color_list):
         x_val = np.arange(index_min, index_max, 1)
         y_val = stair_df[name].values
     
@@ -106,7 +111,7 @@ def plotStair(stair_df, best_gamma, index_min = -5, index_max = 5, output_path =
     
         poly = np.polyfit(x_val, y_val, 3)
         poly_y = np.poly1d(poly)(x_val)
-        ax.plot(x_val, poly_y, linewidth = 2.5, color = 'steelblue', label = name + ' ($\gamma$ = ' + str(gamma) + ')')
+        ax.plot(x_val, poly_y, linewidth = 2.5, color = color, label = name + ' ($\gamma$ = ' + str(gamma) + ')')
 
     ax.set_xlabel('Distance to TAD boundary, kb', fontsize = 20)
     ax.set_ylabel('Median z-score of acetylation values', fontsize = 20)
