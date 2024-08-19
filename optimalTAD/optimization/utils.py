@@ -63,11 +63,23 @@ def progressbar (iteration, total):
 
 def check_path(path, folder_name, name = None):
     dirName = os.path.join(path, folder_name, name + '/')
+    # Taken from here 
+    # https://stackoverflow.com/questions/185936/how-to-delete-the-contents-of-a-folder
+    
     if not os.path.exists(dirName):
         os.makedirs(dirName, exist_ok=True)
     else:
-        for old_file in glob.glob(os.path.join(dirName, '*')):
-            os.remove(old_file)
+        for filename in os.listdir(dirName):
+            file_path = os.path.join(dirName, filename)
+
+            if os.path.isfile(file_path) or os.path.islink(file_path):
+                os.unlink(file_path)
+            elif os.path.isdir(file_path):
+                shutil.rmtree(file_path)
+
+        # for old_file in glob.glob(os.path.join(dirName, '*')):
+        #     os.remove(old_file)
+    
     return dirName
 
 
@@ -133,13 +145,13 @@ def check_chrnames(labels_config, labels):
 
 
 def check_filenames(hic_files, chipseq_files):
-    samplenames = [os.path.split(i)[1].split('.')[0] for i in hic_files]
+    samplenames = [os.path.splitext(os.path.split(i)[1])[0] for i in hic_files]
     hic_files_number = len(hic_files)
     chipseq_files_number = len(chipseq_files)
     if hic_files_number != chipseq_files_number:
         if hic_files_number == 1:
             hic_files = np.repeat(hic_files, chipseq_files_number)
-            samplenames = [os.path.split(i)[1].split('.')[0] for i in chipseq_files]
+            samplenames = [os.path.splitext(os.path.split(i)[1])[0] for i in chipseq_files]
         elif chipseq_files_number == 1:
             chipseq_files = np.repeat(chipseq_files, hic_files_number)
         else:

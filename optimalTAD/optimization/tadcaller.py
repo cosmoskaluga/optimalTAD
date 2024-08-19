@@ -100,7 +100,7 @@ def ins_table2tads(ins):
     for window_size in window_sizes:
         ins_ws = ins[ins[f"is_boundary_{window_size}"] == False]
         tads = bioframe.merge(ins_ws)
-        tads = tads[(tads["end"] - tads["start"]) <= 2000000].reset_index(drop=True)
+        # tads = tads[(tads["end"] - tads["start"]) <= 2000000].reset_index(drop=True)
         tads = tads[['chrom', 'start', 'end']]
         tads.columns = ['Chr', 'Start', 'End']
         tad_files[window_size] = tads
@@ -152,7 +152,7 @@ def run_IS(path, args, set_chromosomes, ignore_diags = None, clr_weight_name = "
         path += suffix
 
     clr = cooler.Cooler(path) 
-    windows = (np.arange(args.window_size_min, args.window_size_max, args.resolution)).astype(int)
+    windows = (np.arange(args.window_size_min, args.window_size_max + 1, args.resolution)).astype(int)
     insulation_table = cooltools.insulation(clr,    
                                             window_bp = windows, 
                                             nproc = args.np, 
@@ -166,7 +166,7 @@ def run_IS(path, args, set_chromosomes, ignore_diags = None, clr_weight_name = "
     else:
         labels_config = set_chromosomes.split(',')
         labels = utils.check_chrnames(labels_config, clr.chromnames)
-    
+
     insulation_table = insulation_table.loc[insulation_table['chrom'].isin(labels)]
 
     return ins_table2tads(insulation_table)
