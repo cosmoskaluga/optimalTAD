@@ -58,6 +58,7 @@ The basic optimalTAD commands are:
         parser.add_argument('--log2_hic', action = 'store_true', help = 'log2 transformation of input Hi-C matrix')
         parser.add_argument('--log2_chip', action = 'store_true', help = 'log2 transformation of input ChIP-Seq track')
         parser.add_argument('--zscore_chip', action = 'store_true', help = 'Z-score transformation of ChIP-Seq track')
+        parser.add_argument('--balance', action = "store_true", help = "Hi-C matrix is iteratively normalized")
         parser.add_argument('--mammal', action = 'store_true', help = 'Input data is derived from mammalian species')
         parser.add_argument('--window_size_min', type = int, default = 40000, help = 'Minimal window size in the IS method (for mammals only!)')
         parser.add_argument('--window_size_max', type = int, default = 120000, help = 'Maximal window size in the IS method (for mammals only!)')
@@ -66,6 +67,7 @@ The basic optimalTAD commands are:
         parser.set_defaults(log2_hic = eval(self.cfg['run']['log2_hic']))
         parser.set_defaults(log2_chip = eval(self.cfg['run']['log2_chip']))
         parser.set_defaults(zscore_chip = eval(self.cfg['run']['zscore_chip']))
+        parser.set_defaults(balance = eval(self.cfg['run']['balance']))
         args = parser.parse_args(sys.argv[2:])
         run.main(args, self.cfg, self.log)
         

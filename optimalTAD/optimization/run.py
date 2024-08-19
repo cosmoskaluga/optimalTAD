@@ -63,7 +63,7 @@ def main(args, cfg, log):
         ChipSeqLoader = chipseqloader.ChipSeq(chipseq_path, set_chromosomes, list(chromsize.keys()), chromsize, args.resolution)
         chip_data = ChipSeqLoader(args.log2_chip, args.zscore_chip, blacklist)
         
-        chip_data.to_csv("~/Documents/chip_data.csv", header = True, index=False)
+        chip_data.to_csv("./chip_data.csv", header = True, index=False)
         
         log.info('Calculate amplitudes')
         stairs, amplitudes = staircaller.get_stairs(ind,
