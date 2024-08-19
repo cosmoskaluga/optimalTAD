@@ -99,7 +99,7 @@ def ins_table2tads(ins):
 
     for window_size in window_sizes:
         ins_ws = ins[ins[f"is_boundary_{window_size}"] == False]
-        tads = bioframe.merge(ins_ws)
+        tads = bioframe.merge(ins_ws).reset_index(drop=True)
         # tads = tads[(tads["end"] - tads["start"]) <= 2000000].reset_index(drop=True)
         tads = tads[['chrom', 'start', 'end']]
         tads.columns = ['Chr', 'Start', 'End']
@@ -143,7 +143,8 @@ def run_IS(path, args, set_chromosomes, ignore_diags = None, clr_weight_name = "
     import cooltools
     import cooler
 
-    output_path = os.path.join(os.path.realpath('.'), 'output')
+    output_path = args.output
+    # output_path = os.path.join(os.path.realpath('.'), 'output')
     utils.check_path('', '', output_path)
 
     extension = os.path.splitext(path)[1]
@@ -153,13 +154,24 @@ def run_IS(path, args, set_chromosomes, ignore_diags = None, clr_weight_name = "
 
     clr = cooler.Cooler(path) 
     windows = (np.arange(args.window_size_min, args.window_size_max + 1, args.resolution)).astype(int)
-    insulation_table = cooltools.insulation(clr,    
-                                            window_bp = windows, 
-                                            nproc = args.np, 
-                                            ignore_diags = ignore_diags, 
-                                            clr_weight_name = clr_weight_name, 
-                                            min_frac_valid_pixels = min_frac_valid_pixels, 
-                                            verbose = verbose)
+
+    if args.balance:
+        insulation_table = cooltools.insulation(clr,    
+                                                window_bp = windows, 
+                                                nproc = args.np, 
+                                                ignore_diags = ignore_diags, 
+                                                clr_weight_name = clr_weight_name, 
+                                                min_frac_valid_pixels = min_frac_valid_pixels, 
+                                                verbose = verbose)
+    else:
+        insulation_table = cooltools.insulation(clr,    
+                                                window_bp = windows, 
+                                                nproc = args.np, 
+                                                ignore_diags = ignore_diags, 
+                                                clr_weight_name = None, 
+                                                append_raw_scores=True,
+                                                min_frac_valid_pixels = min_frac_valid_pixels, 
+                                                verbose = verbose)
 
     if set_chromosomes == 'None':
         labels = clr.chromnames

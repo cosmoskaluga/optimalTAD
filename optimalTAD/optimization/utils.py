@@ -17,8 +17,8 @@ def optimal_gamma(data):
     return round(gamma[maxindex], 2)
 
 
-def select_optimal_tads(tads, optimal_gamma, samplename, mammal = False):
-    dst = check_path(os.path.join(os.path.realpath('.'),'output/'), 'optimal_gamma', samplename)
+def select_optimal_tads(tads, optimal_gamma, samplename, output_path, mammal = False):
+    dst = os.path.join(check_path(output_path, '', 'optimal_gamma'), samplename + '.domains.tad')
     if not mammal:
         merged_tads = pd.DataFrame(columns = ['Chr', 'Start', 'End'])
         for src in tads[optimal_gamma]:
@@ -29,14 +29,14 @@ def select_optimal_tads(tads, optimal_gamma, samplename, mammal = False):
     else:
         merged_tads = tads[optimal_gamma]
 
-    merged_tads.to_csv(dst + 'domains.tad', header = True, index = False)
+    merged_tads.to_csv(dst, header = True, index = False)
 
 
 def save_stairs(data, index_min, index_max, output_path):
     data = pd.DataFrame(data)
     x_val = np.arange(index_min, index_max, 1)
     data.index = x_val
-    data.to_csv(os.path.join(os.path.realpath('.'), output_path), header = True, index=True)
+    data.to_csv(output_path, header = True, index=True)
 
 
 def nan_array_comparison(func, arr, thresh):
@@ -63,6 +63,7 @@ def progressbar (iteration, total):
 
 def check_path(path, folder_name, name = None):
     dirName = os.path.join(path, folder_name, name + '/')
+
     # Taken from here 
     # https://stackoverflow.com/questions/185936/how-to-delete-the-contents-of-a-folder
     

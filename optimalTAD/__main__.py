@@ -48,6 +48,7 @@ The basic optimalTAD commands are:
         parser = argparse.ArgumentParser(description='Run optimization process')
         parser.add_argument('--hic', type = str, nargs='+', default = sorted(hicpath), help = 'Path to iteratively corrected Hi-C data')
         parser.add_argument('--chipseq', type = str, nargs = '+', default = sorted(self.chippath), help = 'Path ChIP-seq data')
+        parser.add_argument('--output', type = str, default = self.cfg['output']['output'], help = 'Output directory')
         parser.add_argument('--np', type = int, default = int(self.cfg['run']['np']), help = 'Number of processors')
         parser.add_argument('--resolution', type = int, default = int(self.cfg['run']['resolution']), help = 'Resolution')
         parser.add_argument('--stepsize', type = float, default = float(self.cfg['run']['stepsize']), help = 'Step size to increment gamma parameter')

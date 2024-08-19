@@ -63,7 +63,10 @@ def main(args, cfg, log):
         ChipSeqLoader = chipseqloader.ChipSeq(chipseq_path, set_chromosomes, list(chromsize.keys()), chromsize, args.resolution)
         chip_data = ChipSeqLoader(args.log2_chip, args.zscore_chip, blacklist)
         
-        chip_data.to_csv("./chip_data.csv", header = True, index=False)
+        chip_name = os.path.splitext(os.path.split(chipseq_path)[1])[0]
+        path_to_normalized_chip = os.path.join(utils.check_path(args.output, '', cfg.get('output', 'path_to_normalized_chip')), chip_name + ".csv" )
+        chip_data.to_csv(path_to_normalized_chip, header = True, index=False)
+        # chip_data.to_csv("./chip_data.csv", header = True, index=False)
         
         log.info('Calculate amplitudes')
         stairs, amplitudes = staircaller.get_stairs(ind,
@@ -88,13 +91,14 @@ def main(args, cfg, log):
         best_gamma = utils.optimal_gamma(df_sample)
         log.info('The optimal gamma for {} is {}'.format(samplename, best_gamma))
         
+        path_to_stairs = os.path.join(args.output, cfg.get('output', 'path_to_stair_data'))
         utils.save_stairs(stairs, 
                             index_min = cfg.getint('stair', 'index_min'),
                             index_max = cfg.getint('stair', 'index_max'), 
-                            output_path = cfg.get('output', 'path_to_stair_data'))
+                            output_path = path_to_stairs)
 
 
-        utils.select_optimal_tads(tads, best_gamma, samplename, mammal = args.mammal)
+        utils.select_optimal_tads(tads, best_gamma, samplename, args.output, mammal = args.mammal)
 
         stair_dict[samplename] = stairs[best_gamma]
         best_gamma_array.append(best_gamma)
@@ -104,18 +108,18 @@ def main(args, cfg, log):
         print()
     
     
-    path = os.path.join(os.path.realpath('.'), cfg.get('output', 'path_to_amplitude_figure') + '.' + cfg.get('output', 'figure_postfix'))
-    plotter.plotAmplitude(df, output_path = path, dpi = cfg.getint('output', 'figure_dpi'))
+    path_to_amplitudes_plot =  os.path.join(args.output, cfg.get('output', 'path_to_amplitude_figure') + '.' + cfg.get('output', 'figure_postfix'))
+    plotter.plotAmplitude(df, output_path = path_to_amplitudes_plot, dpi = cfg.getint('output', 'figure_dpi'))
 
 
+    path_to_stairs_plot =  os.path.join(args.output, cfg.get('output', 'path_to_best_stair_figure') + '.' + cfg.get('output', 'figure_postfix'))
     stair_df = pd.DataFrame(stair_dict)
     plotter.plotStair(stair_df,
                       best_gamma_array,
                       index_min = cfg.getint('stair', 'index_min'),
                       index_max = cfg.getint('stair', 'index_max'),
-                      output_path = os.path.join(os.path.realpath('.'), 
-                                                 cfg.get('output', 'path_to_best_stair_figure') + '.' + cfg.get('output', 'figure_postfix')),
+                      output_path = path_to_stairs_plot,
                       dpi = cfg.getint('output', 'figure_dpi'), 
-                      path_to_stair_dataframe = os.path.join(os.path.realpath('.'), cfg.get('output', 'path_to_best_stair_data')))
+                      path_to_stair_dataframe = os.path.join(args.output, '', cfg.get('output', 'path_to_best_stair_data')))
 
-    df.to_csv(os.path.join(os.path.realpath('.'), cfg.get('output', 'path_to_amplitude_file')), header = True, index=False)
+    df.to_csv(os.path.join(args.output, '', cfg.get('output', 'path_to_amplitude_file')), header = True, index=False)
