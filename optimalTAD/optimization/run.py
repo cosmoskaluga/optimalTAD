@@ -35,7 +35,9 @@ def main(args, cfg, log):
                                         args.hic_format,
                                         args.resolution,
                                         set_chromosomes,
-                                        balance = eval(cfg.get('hic', 'balance')))
+                                        balance = eval(cfg.get('hic', 'balance')), 
+                                        rec_size = int(cfg.get('hic', 'recommended_size_armatus'))
+                                        )
                                   
                 chromsize = HicLoader(args.empty_row_imputation,
                                     args.truncation,
@@ -64,9 +66,8 @@ def main(args, cfg, log):
         chip_data = ChipSeqLoader(args.log2_chip, args.zscore_chip, blacklist)
         
         chip_name = os.path.splitext(os.path.split(chipseq_path)[1])[0]
-        path_to_normalized_chip = os.path.join(utils.check_path(args.output, '', cfg.get('output', 'path_to_normalized_chip')), chip_name + ".csv" )
-        chip_data.to_csv(path_to_normalized_chip, header = True, index=False)
-        # chip_data.to_csv("./chip_data.csv", header = True, index=False)
+        #path_to_normalized_chip = os.path.join(utils.check_path(args.output, '', cfg.get('output', 'path_to_normalized_chip')), chip_name + ".csv" )
+        #chip_data.to_csv(path_to_normalized_chip, header = True, index=False)
         
         log.info('Calculate amplitudes')
         stairs, amplitudes = staircaller.get_stairs(ind,

@@ -24,7 +24,6 @@ The basic optimalTAD commands are:
         parser.add_argument('command', default = self.cfg.get('basic', 'mode'), help='Subcommand to run')
         parser.add_argument('-v', '--version', action='version', version='optimalTAD 0.1.0')
         args = parser.parse_args(sys.argv[1:2])
-        print(args.command)
 
         arg = sys.argv[1:2]
         if arg:

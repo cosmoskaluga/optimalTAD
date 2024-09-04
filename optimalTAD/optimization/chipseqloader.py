@@ -202,8 +202,11 @@ def get_bedgraph(self, blacklist_regions = False):
         dataframe
             Processed and binarized (if needed) ChIP-seq signal
     """
-    df_chip = pd.read_csv(self.path, sep = '\s+', comment = 't', header = None, names = ['Chr', 'Start', 'End', 'Score'])
+    df_chip = pd.read_csv(self.path, sep = '\s+', comment = 't', header = None, names = ['Chr', 'Start', 'End', 'Score'],  
+                          dtype = {"Chr": object, "Start": np.int64, "End": np.int64, "Score": np.float64})  
+
     labels = utils.check_chrnames(self.chrnames, np.unique(df_chip.Chr))
+
     df_chip = df_chip.loc[df_chip['Chr'].isin(list(labels))]
 
     df_chip = df_chip.replace('NA', 'nan')
