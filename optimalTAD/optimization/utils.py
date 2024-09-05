@@ -137,7 +137,7 @@ def check_chrnames(labels_config, labels):
     if set(labels_config).issubset(set(labels)):
         chrnames = labels_config
     elif len(set(labels).intersection(labels_config)) > 0:
-        chrnames = np.array(set(labels).intersection(labels_config))
+        chrnames = list(set(labels).intersection(labels_config))
     else:
         log.info('ERROR: Specified choromosomes are not found! Please set correct chromosome names in the configuration file.')
         sys.exit(1)

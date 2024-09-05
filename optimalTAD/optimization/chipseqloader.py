@@ -211,7 +211,7 @@ def get_bedgraph(self, blacklist_regions = False):
 
     labels = utils.check_chrnames(self.chrnames, np.unique(df_chip.Chr))
 
-    df_chip = df_chip.loc[df_chip['Chr'].isin(list(labels))]
+    df_chip = df_chip.loc[df_chip['Chr'].isin(labels)]
 
     df_chip = df_chip.replace('NA', 'nan')
     df_chip.replace(['inf', '-inf'], 'nan', inplace=True)
