@@ -5,6 +5,7 @@ import os
 import sys
 import glob
 import logging
+import csv
 
 from itertools import repeat
 from collections import Counter, OrderedDict
@@ -202,7 +203,10 @@ def get_bedgraph(self, blacklist_regions = False):
         dataframe
             Processed and binarized (if needed) ChIP-seq signal
     """
-    df_chip = pd.read_csv(self.path, sep = '\s+', comment = 't', header = None, names = ['Chr', 'Start', 'End', 'Score'],  
+    with open(self.path) as f:
+        header = csv.Sniffer().has_header(f.read(1024))
+
+    df_chip = pd.read_csv(self.path, sep = '\s+', comment = 't', header = None, skiprows=header*1, names = ['Chr', 'Start', 'End', 'Score'],  
                           dtype = {"Chr": object, "Start": np.int64, "End": np.int64, "Score": np.float64})  
 
     labels = utils.check_chrnames(self.chrnames, np.unique(df_chip.Chr))
