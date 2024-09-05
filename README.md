@@ -49,6 +49,7 @@ Required and optional arguments:
     -h, --help                              Help message
     --hic HIC [HIC ...]                     Iteratively corrected Hi-C matrices in .hdf5 or .cool format
     --chipseq CHIPSEQ [CHIPSEQ ...]         Epigenetic data (ChIP-seq in .bedgraph or .bw format)
+    --output OUTPUT                         Output directory (='./output')
     --np [NP]                               Number of processors (=1)
     --resolution [RESOLUTION]               Resolution of Hi-C matrices (=1)
     --stepsize [STEPSIZE]                   Step size to increment gamma parameter in Armatus (=0.05)
@@ -59,7 +60,7 @@ Required and optional arguments:
     --log2_hic                              log2 transformation of Hi-C matrix (=False)
     --log2_chip                             log2 transformation of ChIP-seq values (=False)
     --zscore_chip                           Z-score transformation of ChIP-seq values(=False)
-    --balance, --no-balance                 Hi-C matrix is iteratively normalized (--balance)
+    --balance, --no-balance                 Hi-C matrix is iteratively normalized (='--balance')
     --mammal                                Input data is derived from mammalian species (=False)
     --window_size_min [WINDOW_SIZE_MIN]     Minimal window size in insulation score method (for mammals only!)
     --window_size_max [WINDOW_SIZE_MAX]     Maximal window size in insulation score method (for mammals only!)  
