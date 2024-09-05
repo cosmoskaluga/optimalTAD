@@ -42,8 +42,6 @@ def get_stairs(index_data, df_chip, index_min = -5, index_max = 5, acetyl_min = 
         ``dict_amplitudes`` : dict
             Difference in median ChIP-seq value between inter-TADs and TADs for each value of the optimized parameter 
     """
-    np.save('test_index_data.npy', index_data)
-    df_chip.to_csv("test_df_chip.csv")
 
     kb_list = np.arange(index_min, index_max, 1)
     gamma_range = index_data.keys()

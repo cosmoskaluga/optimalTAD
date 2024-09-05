@@ -24,7 +24,7 @@ def stylize_axes(ax):
     ax.tick_params(axis='both', which='major', labelsize=15)
 
 
-def plotAmplitude(data, output_path = 'amplitude.png', dpi = 200):
+def plotAmplitude(data, output_path, dpi = 200):
     """ 
         Plotting a difference in median ChIP-seq value between inter-TADs and TADs for each value of the optimized parameter 
 
@@ -57,7 +57,12 @@ def plotAmplitude(data, output_path = 'amplitude.png', dpi = 200):
 
     ax.set_xlabel('Gamma', fontsize = 20)
     ax.set_ylabel('Amplitude', fontsize = 20)
-    ax.legend(frameon=False, fontsize = 12)
+
+    box = ax.get_position()
+    ax.set_position([box.x0, box.y0, box.width * 0.8, box.height])
+
+    ax.legend(loc='center left', bbox_to_anchor=(1, 0.5), frameon=False, fontsize = 12)
+
     stylize_axes(ax)
     ax.grid(linestyle=':', linewidth='0.2', color='black')
     
@@ -70,7 +75,7 @@ def plotAmplitude(data, output_path = 'amplitude.png', dpi = 200):
     return ax
 
 
-def plotStair(stair_df, best_gamma, index_min = -5, index_max = 5, output_path = 'stair.png', dpi = 200, path_to_stair_dataframe = None):
+def plotStair(stair_df, best_gamma, output_path, index_min = -5, index_max = 5, dpi = 200, path_to_stair_dataframe = None):
     """ 
         Plotting median ChIP-seq values per each distance to a TAD boundary
 
@@ -118,7 +123,10 @@ def plotStair(stair_df, best_gamma, index_min = -5, index_max = 5, output_path =
     ax.grid(linestyle=':', linewidth='0.2', color='black')
     
     stylize_axes(ax)
-    ax.legend(frameon = False, fontsize = 12)
+    box = ax.get_position()
+    ax.set_position([box.x0, box.y0, box.width * 0.8, box.height])
+
+    ax.legend(loc='center left', bbox_to_anchor=(1, 0.5), frameon=False, fontsize = 12)
 
     if output_path:
         path = os.path.dirname(output_path)

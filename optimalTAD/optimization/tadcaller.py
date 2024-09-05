@@ -1,5 +1,6 @@
 import os
 import sys
+import pandas as pd
 import numpy as np
 import bioframe
 from . import utils
@@ -71,13 +72,15 @@ def run_armatus(args, chromsize, samplename):
 
 
 
-def ins_table2tads(ins):
+def ins_table2tads(ins, balance):
     """ Converting IS boundary table into TAD intervals.
         
         Parameters
         ----------
         ``ins`` : dataframe
             IS output table
+        ```balance``` : boolean
+            True if Hi-C is iteratively normalized
         
         Returns
         -------
@@ -88,19 +91,23 @@ def ins_table2tads(ins):
     """
     list_of_sizes = [i for i in ins.columns if i.find('is_boundary') == 0]
 
-    for size in list_of_sizes:
-        ins.loc[(ins[size] == True) & (ins[f"is_bad_bin"] == True), size] = False
+    if balance:
+        for size in list_of_sizes:
+            ins.loc[ins[size] & ins[f"is_bad_bin"], size] = False
 
-    blacklist = ins.loc[ins.is_bad_bin == True, ["chrom", "start", "end"]]
-    blacklist.columns = ['Chr', 'Start', 'End']
+        blacklist = ins.loc[ins.is_bad_bin, ["chrom", "start", "end"]]
+        blacklist.columns = ['Chr', 'Start', 'End']
+    else:
+        blacklist = pd.DataFrame(columns = ['Chr', 'Start', 'End'])
+
     window_sizes = [i.split("_")[2] for i in ins.columns if i.find('is_boundary') == 0]
 
     tad_files = dict()
 
     for window_size in window_sizes:
-        ins_ws = ins[ins[f"is_boundary_{window_size}"] == False]
-        tads = bioframe.merge(ins_ws)
-        tads = tads[(tads["end"] - tads["start"]) <= 2000000].reset_index(drop=True)
+        ins_ws = ins[~ins[f"is_boundary_{window_size}"]]
+        tads = bioframe.merge(ins_ws).reset_index(drop=True)
+        # tads = tads[(tads["end"] - tads["start"]) <= 2000000].reset_index(drop=True)
         tads = tads[['chrom', 'start', 'end']]
         tads.columns = ['Chr', 'Start', 'End']
         tad_files[window_size] = tads
@@ -109,7 +116,7 @@ def ins_table2tads(ins):
 
 
 
-def run_IS(path, args, set_chromosomes, ignore_diags = None, clr_weight_name = "weight", min_frac_valid_pixels = 0.66, min_dist_bad_bin = 0, verbose = True):
+def run_IS(path, args, set_chromosomes, ignore_diags = 2, clr_weight_name = "weight", min_frac_valid_pixels = 0.66, min_dist_bad_bin = 0, verbose = True):
     """ Running IS function on input Hi-C data.
         
         Parameters
@@ -143,7 +150,8 @@ def run_IS(path, args, set_chromosomes, ignore_diags = None, clr_weight_name = "
     import cooltools
     import cooler
 
-    output_path = os.path.join(os.path.realpath('.'), 'output')
+    output_path = args.output
+    # output_path = os.path.join(os.path.realpath('.'), 'output')
     utils.check_path('', '', output_path)
 
     extension = os.path.splitext(path)[1]
@@ -152,24 +160,35 @@ def run_IS(path, args, set_chromosomes, ignore_diags = None, clr_weight_name = "
         path += suffix
 
     clr = cooler.Cooler(path) 
-    windows = (np.arange(args.window_size_min, args.window_size_max, args.resolution)).astype(int)
-    insulation_table = cooltools.insulation(clr,    
-                                            window_bp = windows, 
-                                            nproc = args.np, 
-                                            ignore_diags = ignore_diags, 
-                                            clr_weight_name = clr_weight_name, 
-                                            min_frac_valid_pixels = min_frac_valid_pixels, 
-                                            verbose = verbose)
+    windows = (np.arange(args.window_size_min, args.window_size_max + 1, args.resolution)).astype(int)
+
+    if args.balance:
+        insulation_table = cooltools.insulation(clr,    
+                                                window_bp = windows, 
+                                                nproc = args.np, 
+                                                ignore_diags = ignore_diags, 
+                                                clr_weight_name = clr_weight_name, 
+                                                min_frac_valid_pixels = min_frac_valid_pixels, 
+                                                verbose = verbose)
+    else:
+        insulation_table = cooltools.insulation(clr,    
+                                                window_bp = windows, 
+                                                nproc = args.np, 
+                                                ignore_diags = ignore_diags, 
+                                                clr_weight_name = None, 
+                                                append_raw_scores=True,
+                                                min_frac_valid_pixels = min_frac_valid_pixels, 
+                                                verbose = verbose)
 
     if set_chromosomes == 'None':
         labels = clr.chromnames
     else:
         labels_config = set_chromosomes.split(',')
         labels = utils.check_chrnames(labels_config, clr.chromnames)
-    
+
     insulation_table = insulation_table.loc[insulation_table['chrom'].isin(labels)]
 
-    return ins_table2tads(insulation_table)
+    return ins_table2tads(insulation_table, args.balance)
 
 
 

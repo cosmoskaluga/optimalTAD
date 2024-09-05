@@ -24,7 +24,6 @@ The basic optimalTAD commands are:
         parser.add_argument('command', default = self.cfg.get('basic', 'mode'), help='Subcommand to run')
         parser.add_argument('-v', '--version', action='version', version='optimalTAD 0.1.0')
         args = parser.parse_args(sys.argv[1:2])
-        print(args.command)
 
         arg = sys.argv[1:2]
         if arg:
@@ -48,6 +47,7 @@ The basic optimalTAD commands are:
         parser = argparse.ArgumentParser(description='Run optimization process')
         parser.add_argument('--hic', type = str, nargs='+', default = sorted(hicpath), help = 'Path to iteratively corrected Hi-C data')
         parser.add_argument('--chipseq', type = str, nargs = '+', default = sorted(self.chippath), help = 'Path ChIP-seq data')
+        parser.add_argument('--output', type = str, default = self.cfg['output']['output'], help = 'Output directory')
         parser.add_argument('--np', type = int, default = int(self.cfg['run']['np']), help = 'Number of processors')
         parser.add_argument('--resolution', type = int, default = int(self.cfg['run']['resolution']), help = 'Resolution')
         parser.add_argument('--stepsize', type = float, default = float(self.cfg['run']['stepsize']), help = 'Step size to increment gamma parameter')
@@ -58,14 +58,16 @@ The basic optimalTAD commands are:
         parser.add_argument('--log2_hic', action = 'store_true', help = 'log2 transformation of input Hi-C matrix')
         parser.add_argument('--log2_chip', action = 'store_true', help = 'log2 transformation of input ChIP-Seq track')
         parser.add_argument('--zscore_chip', action = 'store_true', help = 'Z-score transformation of ChIP-Seq track')
+        parser.add_argument('--balance', action = argparse.BooleanOptionalAction, help = "Hi-C matrix is iteratively normalized")
         parser.add_argument('--mammal', action = 'store_true', help = 'Input data is derived from mammalian species')
-        parser.add_argument('--window_size_min', type = int, default = 40000, help = 'Minimal window size in the IS method (for mammals only!)')
-        parser.add_argument('--window_size_max', type = int, default = 120000, help = 'Maximal window size in the IS method (for mammals only!)')
+        parser.add_argument('--window_size_min', type = int, default = int(self.cfg['stair']['window_size_min']), help = 'Minimal window size in the IS method (for mammals only!)')
+        parser.add_argument('--window_size_max', type = int, default = int(self.cfg['stair']['window_size_max']), help = 'Maximal window size in the IS method (for mammals only!)')
         parser.set_defaults(empty_row_imputation = eval(self.cfg['run']['empty_row_imputation']))
         parser.set_defaults(truncation = eval(self.cfg['run']['truncation']))
         parser.set_defaults(log2_hic = eval(self.cfg['run']['log2_hic']))
         parser.set_defaults(log2_chip = eval(self.cfg['run']['log2_chip']))
         parser.set_defaults(zscore_chip = eval(self.cfg['run']['zscore_chip']))
+        parser.set_defaults(balance = eval(self.cfg['run']['balance']))
         args = parser.parse_args(sys.argv[2:])
         run.main(args, self.cfg, self.log)
         
