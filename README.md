@@ -39,9 +39,8 @@ cd optimalTAD
 ### Usage
 To launch the algorithm type the following at the command line:
 ```bash
-optimalTAD run [-h] [--hic HIC [HIC ...]] [--chipseq CHIPSEQ [CHIPSEQ ...]] [--np NP] [--resolution RESOLUTION] [--stepsize STEPSIZE] [--gamma_max GAMMA_MAX]
-                  [--hic_format HIC_FORMAT] [--empty_row_imputation] [--truncation] [--log2_hic] [--log2_chip] [--zscore_chip] [--mammal] [--window_size_min WINDOW_SIZE_MIN]
-                  [--window_size_max WINDOW_SIZE_MAX]
+optimalTAD [-h] [--hic HIC [HIC ...]] [--chipseq CHIPSEQ [CHIPSEQ ...]] [--output OUTPUT] [--np NP] [--resolution RESOLUTION] [--stepsize STEPSIZE] [--gamma_max GAMMA_MAX] [--hic_format HIC_FORMAT] [--empty_row_imputation]
+                  [--truncation] [--log2_hic] [--log2_chip] [--zscore_chip] [--balance | --no-balance] [--mammal] [--window_size_min WINDOW_SIZE_MIN] [--window_size_max WINDOW_SIZE_MAX]
 ```
 
 
@@ -60,6 +59,7 @@ Required and optional arguments:
     --log2_hic                              log2 transformation of Hi-C matrix (=False)
     --log2_chip                             log2 transformation of ChIP-seq values (=False)
     --zscore_chip                           Z-score transformation of ChIP-seq values(=False)
+    --balance, --no-balance                 Hi-C matrix is iteratively normalized (--balance)
     --mammal                                Input data is derived from mammalian species (=False)
     --window_size_min [WINDOW_SIZE_MIN]     Minimal window size in insulation score method (for mammals only!)
     --window_size_max [WINDOW_SIZE_MAX]     Maximal window size in insulation score method (for mammals only!)  
