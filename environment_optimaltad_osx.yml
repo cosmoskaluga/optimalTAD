@@ -6,7 +6,7 @@ channels:
 dependencies:
   - mpich
   - boost
-  - clangxx_osx-64
+  - clang
   - python=3.9
   - pip=22.2
   - pip:

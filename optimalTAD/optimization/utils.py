@@ -77,9 +77,6 @@ def check_path(path, folder_name, name = None):
                 os.unlink(file_path)
             elif os.path.isdir(file_path):
                 shutil.rmtree(file_path)
-
-        # for old_file in glob.glob(os.path.join(dirName, '*')):
-        #     os.remove(old_file)
     
     return dirName
 
@@ -134,14 +131,12 @@ def check_chrnames(labels_config, labels):
     elif not np.any(check_prefix(labels)) and np.all(check_prefix(labels_config)):   
         labels_config = [chrm[3:] for chrm in labels_config]
         
-    if set(labels_config).issubset(set(labels)):
-        chrnames = labels_config
-    elif len(set(labels).intersection(labels_config)) > 0:
-        chrnames = list(set(labels).intersection(labels_config))
+    if len(set(labels) & set(labels_config)) > 0:
+        chrnames = list(set(labels) & set(labels_config))
     else:
         log.info('ERROR: Specified choromosomes are not found! Please set correct chromosome names in the configuration file.')
         sys.exit(1)
-            
+
     return chrnames
 
 
