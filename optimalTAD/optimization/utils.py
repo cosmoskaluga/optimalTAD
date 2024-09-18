@@ -61,24 +61,27 @@ def progressbar (iteration, total):
     if iteration == total:
         print()
 
-def check_path(path, folder_name, name = None):
-    dirName = os.path.join(path, folder_name, name + '/')
+def uniquify_path(path):
+    """
+    Make unique filepath by adding an integer suffix.
+    Borrowed from: https://stackoverflow.com/questions/13852700/create-file-but-if-name-exists-add-number
+    """
+    filename, extension = os.path.splitext(path)
+    counter = 1
 
-    # Taken from here 
-    # https://stackoverflow.com/questions/185936/how-to-delete-the-contents-of-a-folder
-    
+    while os.path.exists(path):
+        path = filename + "-" + str(counter) + extension
+        counter += 1
+
+    return path
+
+def check_path(path, folder_name, name = None):
+    dirName = os.path.join(path, folder_name, name + "/")
+
     if not os.path.exists(dirName):
         os.makedirs(dirName, exist_ok=True)
-    else:
-        for filename in os.listdir(dirName):
-            file_path = os.path.join(dirName, filename)
 
-            if os.path.isfile(file_path) or os.path.islink(file_path):
-                os.unlink(file_path)
-            elif os.path.isdir(file_path):
-                shutil.rmtree(file_path)
-    
-    return dirName
+    return dirName 
 
 
 def split_chromosome_input(region, resolution):

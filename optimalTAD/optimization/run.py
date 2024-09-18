@@ -56,7 +56,11 @@ def main(args, cfg, log):
                 blacklist = False
             else:
                 log.info('Load Hi-C data and detect boundaries using IS method:')
-                tads, blacklist = tadcaller.run_IS(path = hic_path, args = args, set_chromosomes = set_chromosomes)
+
+                if sample_index == 0:
+                    args.output = utils.uniquify_path(args.output)
+
+                tads, blacklist = tadcaller.run_IS(path = hic_path, args = args, set_chromosomes = set_chromosomes)                
                 ind, chromsize = tadnumeration.get_numeration_mammal(tads, args.resolution)
 
             sample_index+=1
@@ -66,14 +70,14 @@ def main(args, cfg, log):
         chip_data = ChipSeqLoader(args.log2_chip, args.zscore_chip, blacklist)
         
         chip_name = os.path.splitext(os.path.split(chipseq_path)[1])[0]
-        #path_to_normalized_chip = os.path.join(utils.check_path(args.output, '', cfg.get('output', 'path_to_normalized_chip')), chip_name + ".csv" )
-        #chip_data.to_csv(path_to_normalized_chip, header = True, index=False)
+        path_to_normalized_chip = os.path.join(utils.check_path(args.output, '', cfg.get('output', 'path_to_normalized_chip')), chip_name + ".csv")
+        chip_data.to_csv(path_to_normalized_chip, header = True, index=False)
         
         log.info('Calculate amplitudes')
         stairs, amplitudes = staircaller.get_stairs(ind,
                                                     chip_data,
-                                                    index_min = cfg.getint('stair', 'index_min'),
-                                                    index_max = cfg.getint('stair', 'index_max'),
+                                                    index_min = args.index_min,
+                                                    index_max = args.index_max,
                                                     acetyl_min = cfg.getint('stair', 'acetyl_min'),
                                                     acetyl_max = cfg.getint('stair', 'acetyl_max'), 
                                                     mammals = args.mammal)
@@ -94,8 +98,8 @@ def main(args, cfg, log):
         
         path_to_stairs = os.path.join(args.output, cfg.get('output', 'path_to_stair_data'))
         utils.save_stairs(stairs, 
-                            index_min = cfg.getint('stair', 'index_min'),
-                            index_max = cfg.getint('stair', 'index_max'), 
+                            index_min = args.index_min,
+                            index_max = args.index_max, 
                             output_path = path_to_stairs)
 
 
@@ -117,8 +121,8 @@ def main(args, cfg, log):
     stair_df = pd.DataFrame(stair_dict)
     plotter.plotStair(stair_df,
                       best_gamma_array,
-                      index_min = cfg.getint('stair', 'index_min'),
-                      index_max = cfg.getint('stair', 'index_max'),
+                      index_min = args.index_min,
+                      index_max = args.index_max,
                       output_path = path_to_stairs_plot,
                       dpi = cfg.getint('output', 'figure_dpi'), 
                       path_to_stair_dataframe = os.path.join(args.output, '', cfg.get('output', 'path_to_best_stair_data')))

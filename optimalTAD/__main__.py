@@ -60,6 +60,8 @@ The basic optimalTAD commands are:
         parser.add_argument('--zscore_chip', action = 'store_true', help = 'Z-score transformation of ChIP-Seq track')
         parser.add_argument('--balance', action = argparse.BooleanOptionalAction, help = "Hi-C matrix is iteratively normalized")
         parser.add_argument('--mammal', action = 'store_true', help = 'Input data is derived from mammalian species')
+        parser.add_argument('--index_min', type = int, default = int(self.cfg['stair']['index_min']), help = 'Minimal bin index included to the metrics value')
+        parser.add_argument('--index_max', type = int, default = int(self.cfg['stair']['index_max']), help = 'Maximal bin index included to the metrics value')
         parser.add_argument('--window_size_min', type = int, default = int(self.cfg['stair']['window_size_min']), help = 'Minimal window size in the IS method (for mammals only!)')
         parser.add_argument('--window_size_max', type = int, default = int(self.cfg['stair']['window_size_max']), help = 'Maximal window size in the IS method (for mammals only!)')
         parser.set_defaults(empty_row_imputation = eval(self.cfg['run']['empty_row_imputation']))
