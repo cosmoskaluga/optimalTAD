@@ -60,18 +60,25 @@ def main(args, cfg, log):
                 if sample_index == 0:
                     args.output = utils.uniquify_path(args.output)
 
-                tads, blacklist = tadcaller.run_IS(path = hic_path, args = args, set_chromosomes = set_chromosomes)                
+                insulation_table = tadcaller.run_IS(path = hic_path, args = args, set_chromosomes = set_chromosomes)
+                
+                if args.save_insulation_score:
+                    utils.save_table(insulation_table, args.output, cfg.get('output', 'path_to_insulation_score'), samplename + ".insulation_score")
+
+                tads, blacklist = tadcaller.ins_table2tads(insulation_table, args.balance)
                 ind, chromsize = tadnumeration.get_numeration_mammal(tads, args.resolution)
 
-            sample_index+=1
+            sample_index += 1
 
         log.info('Load epigenetic data')
         ChipSeqLoader = chipseqloader.ChipSeq(chipseq_path, set_chromosomes, list(chromsize.keys()), chromsize, args.resolution)
         chip_data = ChipSeqLoader(args.log2_chip, args.zscore_chip, blacklist)
         
-        chip_name = os.path.splitext(os.path.split(chipseq_path)[1])[0]
-        path_to_normalized_chip = os.path.join(utils.check_path(args.output, '', cfg.get('output', 'path_to_normalized_chip')), chip_name + ".csv")
-        chip_data.to_csv(path_to_normalized_chip, header = True, index=False)
+        if args.save_normalized_chip:
+            chip_name = os.path.splitext(os.path.split(chipseq_path)[1])[0]
+            utils.save_table(chip_data, args.output, cfg.get('output', 'path_to_normalized_chip'), chip_name)
+            # path_to_normalized_chip = os.path.join(utils.check_path(args.output, '', cfg.get('output', 'path_to_normalized_chip')), chip_name + ".csv")
+            # chip_data.to_csv(path_to_normalized_chip, header = True, index=False)
         
         log.info('Calculate amplitudes')
         stairs, amplitudes = staircaller.get_stairs(ind,

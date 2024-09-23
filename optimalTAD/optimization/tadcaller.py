@@ -188,7 +188,7 @@ def run_IS(path, args, set_chromosomes, ignore_diags = 2, clr_weight_name = "wei
 
     insulation_table = insulation_table.loc[insulation_table['chrom'].isin(labels)]
 
-    return ins_table2tads(insulation_table, args.balance)
+    return insulation_table
 
 
 
