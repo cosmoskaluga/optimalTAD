@@ -18,6 +18,7 @@ class optimalTAD:
         parser = argparse.ArgumentParser(description = 'optimalTAD: Topologically Associating Domain optimal set prediction', usage = ''' optimalTAD <command> [<args>]
     
 The basic optimalTAD commands are:
+    check            Check the functionality 
     run            Run optimization process
     visualize      Visualize results ''')
         
@@ -26,11 +27,13 @@ The basic optimalTAD commands are:
         args = parser.parse_args(sys.argv[1:2])
 
         arg = sys.argv[1:2]
+        valid_commands = ['run', 'visualize', 'check']
+
         if arg:
-            if arg[0] in ['run', 'visualize']:
+            if arg[0] in valid_commands:
                 args.command = arg[0]
         
-        if args.command not in ['run', 'visualize']:
+        if args.command not in valid_commands:
             self.log.info('Unrecognized command!')
             parser.print_help()
             sys.exit(1)
@@ -39,11 +42,10 @@ The basic optimalTAD commands are:
         self.chippath = glob.glob(os.path.expanduser(chippath))
         getattr(self, args.command)()
 
-    def run(self):
-        start_time = time.time()
+    def call_argparse(self):
         hicpath = self.cfg.get('run','hic')
         hicpath = glob.glob(os.path.expanduser(hicpath))
-        
+
         parser = argparse.ArgumentParser(description='Run optimization process')
         parser.add_argument('--hic', type = str, nargs='+', default = sorted(hicpath), help = 'Path to iteratively corrected Hi-C data')
         parser.add_argument('--chipseq', type = str, nargs = '+', default = sorted(self.chippath), help = 'Path ChIP-seq data')
@@ -75,6 +77,33 @@ The basic optimalTAD commands are:
         parser.set_defaults(save_insulation_score = eval(self.cfg['run']['save_insulation_score']))
         parser.set_defaults(balance = eval(self.cfg['run']['balance']))
         args = parser.parse_args(sys.argv[2:])
+
+        return args
+
+    def check(self):
+        start_time = time.time()
+
+        # test fly algorithm
+        args = self.call_argparse()
+        args.mammal = False
+        args.output = "./testouput/fly"
+        run.main(args, self.cfg, self.log)
+
+        # test mammal algorithm
+        args.hic = ["./testdata/mammal/mammal_chr1.cool"]
+        args.chipseq = ["./testdata/mammal/mammal_chr1.bedgraph"]
+        args.output = "./testouput/mammal"
+        args.balance = False
+        args.mammal = True
+        run.main(args, self.cfg, self.log)
+
+        cpu_time = round(time.time()-start_time, 2)
+        self.log.info('Execution time: {} sec'.format(cpu_time))
+
+    def run(self):
+        start_time = time.time()
+        
+        args = self.call_argparse()
         run.main(args, self.cfg, self.log)
         
         cpu_time = round(time.time()-start_time, 2)
