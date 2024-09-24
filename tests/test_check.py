@@ -22,8 +22,8 @@ def iterate_through_files(ref_path, test_path, relative_path):
 def test_check_fly():
     os.system("optimalTAD check")
 
-    ref_path = "/tank/projects/esa_scHiC/Tan2021/optimalTAD/tests/reference_files/"
-    test_path = "/tank/projects/esa_scHiC/Tan2021/optimalTAD/testouput/"
+    ref_path = "./tests/reference_files/"
+    test_path = "./optimalTAD/testouput/"
     relative_path = ""
 
     iterate_through_files(ref_path, test_path, relative_path)
