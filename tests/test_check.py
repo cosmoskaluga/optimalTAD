@@ -4,7 +4,9 @@ import filecmp
 import os
 
 def iterate_through_files(ref_path, test_path, relative_path):
-    for file in os.listdir(ref_path):
+    lsdir = os.listdir(ref_path)
+    if '.DS_Store' in lsdir: lsdir.remove('.DS_Store')
+    for file in lsdir:
         ref_file_path = os.path.join(ref_path, file)
         if os.path.isfile(ref_file_path):
             test_file_path = os.path.join(test_path, relative_path, file)

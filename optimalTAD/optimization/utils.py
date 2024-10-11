@@ -36,7 +36,7 @@ def save_stairs(data, index_min, index_max, output_path):
     data = pd.DataFrame(data)
     x_val = np.arange(index_min, index_max, 1)
     data.index = x_val
-    data.to_csv(output_path, header = True, index=True)
+    data.to_csv(output_path, header = True, index=True, float_format='%.5f')
 
 
 def nan_array_comparison(func, arr, thresh):
@@ -159,6 +159,7 @@ def check_filenames(hic_files, chipseq_files):
         
     return np.array(sorted(hic_files)), np.array(sorted(chipseq_files)), np.array(sorted(samplenames))
 
+
 def save_table(table, output, output_category, name):
     path_to_table = os.path.join(check_path(output, '', output_category), name + ".csv")
-    table.to_csv(path_to_table, header = True, index=False)
+    table.to_csv(path_to_table, header = True, index=False, float_format='%.5f')

@@ -134,4 +134,4 @@ def main(args, cfg, log):
                       dpi = cfg.getint('output', 'figure_dpi'), 
                       path_to_stair_dataframe = os.path.join(args.output, '', cfg.get('output', 'path_to_best_stair_data')))
 
-    df.to_csv(os.path.join(args.output, '', cfg.get('output', 'path_to_amplitude_file')), header = True, index=False)
+    df.to_csv(os.path.join(args.output, '', cfg.get('output', 'path_to_amplitude_file')), float_format='%.5f', header = True, index=False)

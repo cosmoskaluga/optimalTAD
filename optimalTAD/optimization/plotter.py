@@ -137,7 +137,7 @@ def plotStair(stair_df, best_gamma, output_path, index_min = -5, index_max = 5, 
     if path_to_stair_dataframe:
         x_val = np.arange(index_min, index_max, 1)
         stair_df.index = x_val
-        stair_df.to_csv(path_to_stair_dataframe, header = True, index=True)
+        stair_df.to_csv(path_to_stair_dataframe, float_format='%.5f', header = True, index=True)
 
     return ax
 
