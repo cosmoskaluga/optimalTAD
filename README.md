@@ -79,10 +79,10 @@ First, execute `test_data.sh` script:
 chmod a+x ./test_data.sh
 ./test_data.sh
 ```
-It will create `testdata` folder containing Hi-C and ChIP-seq data of Drosophila chromosome 2L. Next, run `optimalTAD`:
+It will create `testdata` folder containing Hi-C and ChIP-seq data of *Drosophila* (chr2L) and mouse adult neurons (chr 1). Next, run `optimalTAD`:
 
 ```bash
-optimalTAD run
+optimalTAD test
 ```
     
 ### Visualizing results
