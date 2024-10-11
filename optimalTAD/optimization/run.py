@@ -22,6 +22,8 @@ def main(args, cfg, log):
     hic_files, chipseq_files, samplenames = utils.check_filenames(args.hic, args.chipseq)
     sample_index = 0
 
+    args.output = utils.uniquify_path(args.output)
+
     for hic_path, chipseq_path, samplename in zip(hic_files, chipseq_files, samplenames):
         #samplename = os.path.split(hic_path)[1].split('.')[0]
         log.info('\033[1m' + 'Samplename: ' + samplename + '\033[0m')
@@ -43,22 +45,20 @@ def main(args, cfg, log):
                                     args.truncation,
                                     shrinkage_min = float(cfg.get('hic', 'shrinkage_min')),
                                     shrinkage_max = float(cfg.get('hic', 'shrinkage_max')),
-                                    log2_hic = args.log2_hic)
+                                    log2_hic = args.log2_hic, 
+                                    output_folder = args.output)
                               
                 chrs = np.array(list(chromsize.keys()), dtype = str)
                 sizes = np.fromiter(chromsize.values(), dtype = int)
 
                 log.info('Run armatus on {} chromosomes:'.format(len(chrs)))
-                tadcaller.run_armatus(args, chromsize, samplename)
+                tadcaller.run_armatus(args, chromsize, samplename, args.output)
 
                 log.info('Calculate indexes')
-                ind, tads = tadnumeration.get_numeration(chrs, args.resolution, sizes, samplename, args.gamma_max, args.stepsize)
+                ind, tads = tadnumeration.get_numeration(chrs, args.resolution, sizes, samplename, args.gamma_max, args.stepsize, args.output)
                 blacklist = False
             else:
                 log.info('Load Hi-C data and detect boundaries using IS method:')
-
-                if sample_index == 0:
-                    args.output = utils.uniquify_path(args.output)
 
                 insulation_table = tadcaller.run_IS(path = hic_path, args = args, set_chromosomes = set_chromosomes)
                 

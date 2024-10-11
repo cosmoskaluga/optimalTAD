@@ -131,6 +131,7 @@ dmypy.json
 # Output
 log/
 output/
+testoutput/
 testdata/
 
 # Armatus

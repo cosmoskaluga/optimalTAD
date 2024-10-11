@@ -18,7 +18,7 @@ class optimalTAD:
         parser = argparse.ArgumentParser(description = 'optimalTAD: Topologically Associating Domain optimal set prediction', usage = ''' optimalTAD <command> [<args>]
     
 The basic optimalTAD commands are:
-    check            Check the functionality 
+    test            Check the functionality 
     run            Run optimization process
     visualize      Visualize results ''')
         
@@ -27,7 +27,7 @@ The basic optimalTAD commands are:
         args = parser.parse_args(sys.argv[1:2])
 
         arg = sys.argv[1:2]
-        valid_commands = ['run', 'visualize', 'check']
+        valid_commands = ['run', 'visualize', 'test']
 
         if arg:
             if arg[0] in valid_commands:
@@ -80,19 +80,19 @@ The basic optimalTAD commands are:
 
         return args
 
-    def check(self):
+    def test(self):
         start_time = time.time()
 
         # test fly algorithm
         args = self.call_argparse()
         args.mammal = False
-        args.output = "./testouput/fly"
+        args.output = "./testoutput/fly"
         run.main(args, self.cfg, self.log)
 
         # test mammal algorithm
         args.hic = ["./testdata/mammal/mammal_chr1.cool"]
         args.chipseq = ["./testdata/mammal/mammal_chr1.bedgraph"]
-        args.output = "./testouput/mammal"
+        args.output = "./testoutput/mammal"
         args.balance = False
         args.mammal = True
         run.main(args, self.cfg, self.log)
@@ -106,7 +106,7 @@ The basic optimalTAD commands are:
         args = self.call_argparse()
         run.main(args, self.cfg, self.log)
         
-        cpu_time = round(time.time()-start_time, 2)
+        cpu_time = round(time.time() - start_time, 2)
         self.log.info('Execution time: {} sec'.format(cpu_time))
     
     def visualize(self):

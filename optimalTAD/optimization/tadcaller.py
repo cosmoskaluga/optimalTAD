@@ -41,7 +41,7 @@ def armatus(np, resolution, path_to_data, gamma_max, stepsize, output, chromosom
 
 
 
-def run_armatus(args, chromsize, samplename):
+def run_armatus(args, chromsize, samplename, output_folder):
     """ Confiuring output path and running armatus
         
         Parameters
@@ -53,7 +53,7 @@ def run_armatus(args, chromsize, samplename):
         ``samplename`` : str
             A name of the input sample
     """
-    path = os.path.join(os.path.realpath('.'), 'output')
+    path = os.path.join(os.path.realpath('.'), output_folder)
     path_to_hic = os.path.join(path, 'data', samplename + '/')
     num = 0
     for chromosome in chromsize.keys():
@@ -116,7 +116,7 @@ def ins_table2tads(ins, balance):
 
 
 
-def run_IS(path, args, set_chromosomes, ignore_diags = 2, clr_weight_name = "weight", min_frac_valid_pixels = 0.66, min_dist_bad_bin = 0, verbose = True):
+def run_IS(path, args, set_chromosomes, ignore_diags = 2, clr_weight_name = "weight", min_frac_valid_pixels = 0.66, min_dist_bad_bin = 0, append_raw_scores = False, verbose = False):
     """ Running IS function on input Hi-C data.
         
         Parameters
@@ -133,6 +133,9 @@ def run_IS(path, args, set_chromosomes, ignore_diags = 2, clr_weight_name = "wei
             An implicit cooltools parameter
         ``min_dist_bad_bin`` : int
             An implicit cooltools parameter
+        ``append_raw_scores`` : bool
+            An implicit cooltools parameter
+        to the output table.
         ``verbose`` : bool
             Silent mode in IS function (False)
         
@@ -162,23 +165,19 @@ def run_IS(path, args, set_chromosomes, ignore_diags = 2, clr_weight_name = "wei
     clr = cooler.Cooler(path) 
     windows = (np.arange(args.window_size_min, args.window_size_max + 1, args.resolution)).astype(int)
 
-    if args.balance:
-        insulation_table = cooltools.insulation(clr,    
+    if not args.balance:
+        clr_weight_name = None
+        append_raw_scores = True
+
+    insulation_table = cooltools.insulation(clr,    
                                                 window_bp = windows, 
                                                 nproc = args.np, 
                                                 ignore_diags = ignore_diags, 
                                                 clr_weight_name = clr_weight_name, 
+                                                append_raw_scores = append_raw_scores,
                                                 min_frac_valid_pixels = min_frac_valid_pixels, 
                                                 verbose = verbose)
-    else:
-        insulation_table = cooltools.insulation(clr,    
-                                                window_bp = windows, 
-                                                nproc = args.np, 
-                                                ignore_diags = ignore_diags, 
-                                                clr_weight_name = None, 
-                                                append_raw_scores=True,
-                                                min_frac_valid_pixels = min_frac_valid_pixels, 
-                                                verbose = verbose)
+
 
     if set_chromosomes == 'None':
         labels = clr.chromnames

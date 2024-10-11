@@ -20,10 +20,10 @@ def iterate_through_files(ref_path, test_path, relative_path):
             iterate_through_files(os.path.join(ref_path, file), test_path, os.path.join(relative_path, file))
 
 def test_check_fly():
-    os.system("optimalTAD check")
+    os.system("optimalTAD test")
 
     ref_path = "./tests/reference_files/"
-    test_path = "./optimalTAD/testouput/"
+    test_path = "./testoutput/"
     relative_path = ""
 
     iterate_through_files(ref_path, test_path, relative_path)

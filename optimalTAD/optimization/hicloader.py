@@ -12,7 +12,7 @@ log = logging.getLogger(__name__)
 accepted_extensions = ['.mcool', '.cool', '.hdf5']
 
 
-def load_hdf5(path, samplename, set_chromosomes, fileformat, rec_size, empty_row_imputation, truncation, shrinkage_min, shrinkage_max, log2_transformation):
+def load_hdf5(path, samplename, set_chromosomes, fileformat, rec_size, empty_row_imputation, truncation, shrinkage_min, shrinkage_max, log2_transformation, output_folder):
     import h5py
     path = os.path.expanduser(path)
     f = h5py.File(path, 'r')
@@ -23,7 +23,7 @@ def load_hdf5(path, samplename, set_chromosomes, fileformat, rec_size, empty_row
         labels_config = set_chromosomes.split(',')
         labels = utils.check_chrnames(labels_config, f['chromosomeLabels'][()].astype('<U5'))
     
-    path_to_output = os.path.join(os.path.realpath('.'), 'output')
+    path_to_output = os.path.join(os.path.realpath('.'), output_folder)
     path_to_sample = utils.check_path(path_to_output, 'data', samplename)
     
     chromsize = {}
@@ -61,10 +61,10 @@ def get_coefficients(amin, amax, cmin, cmax):
     return k, b
 
 
-def load_cool(path, samplename, set_chromosomes, fileformat, balance, rec_size, empty_row_imputation, truncation, shrinkage_min, shrinkage_max, log2_transformation):
+def load_cool(path, samplename, set_chromosomes, fileformat, balance, rec_size, empty_row_imputation, truncation, shrinkage_min, shrinkage_max, log2_transformation, output_folder):
     import cooler
 
-    path_to_output = os.path.join(os.path.realpath('.'), 'output')
+    path_to_output = os.path.join(os.path.realpath('.'), output_folder)
     path_to_sample = utils.check_path(path_to_output, 'data', samplename)
     coolfile = cooler.Cooler(path)
     
@@ -144,11 +144,11 @@ class HiC:
             suffix = '::resolutions/' + str(resolution)
             self.path += suffix
 
-    def __call__(self, empty_row_imputation = False, truncation = False, shrinkage_min = None, shrinkage_max = None, log2_hic = False):
+    def __call__(self, empty_row_imputation = False, truncation = False, shrinkage_min = None, shrinkage_max = None, log2_hic = False, output_folder = 'output/'):
         if self.extension == '.hdf5':
-            chromsize = load_hdf5(self.path, self.samplename, self.set_chromosomes, self.hic_format, self.rec_size, empty_row_imputation, truncation, shrinkage_min, shrinkage_max, log2_hic)
+            chromsize = load_hdf5(self.path, self.samplename, self.set_chromosomes, self.hic_format, self.rec_size, empty_row_imputation, truncation, shrinkage_min, shrinkage_max, log2_hic, output_folder)
         else:
-            chromsize = load_cool(self.path, self.samplename, self.set_chromosomes, self.hic_format, self.balance, self.rec_size, empty_row_imputation, truncation, shrinkage_min, shrinkage_max, log2_hic)
+            chromsize = load_cool(self.path, self.samplename, self.set_chromosomes, self.hic_format, self.balance, self.rec_size, empty_row_imputation, truncation, shrinkage_min, shrinkage_max, log2_hic, output_folder)
 
         return chromsize
 
