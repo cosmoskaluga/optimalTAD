@@ -1,35 +1,46 @@
 import numpy as np
 
+def get_single_empty_lines(zeroidx):
+    div_points = np.flatnonzero(np.diff(zeroidx)!=1) + 1
+    start_points = np.r_[0, div_points]
+    end_points = np.r_[div_points, len(zeroidx)]
+    out = np.transpose([zeroidx[start_points], zeroidx[end_points - 1]])
+    out = out[(out[:,1] - out[:,0]) < 2]
+    return out[:, 0]
+
+
 def diagonal_interpolation(data):
     """ Diagonal interpolation to impute missing bins in Hi-C data. Currently, tested with armatus only
-        
+
         Parameters
         ----------
         ``data`` : np.ndarray
-            A Hi-C matrix with empty lines  
-        
+            A Hi-C matrix with empty lines
+
         Returns
         -------
         np.ndarray
             An imputed Hi-C matrix
     """
-    
+
     if np.any(np.isnan(data) == True):
         bool_matrix = np.isnan(data, dtype = bool)
         zeroidx = np.where(np.all(bool_matrix == True, axis=1))[0]
     else:
         vmin = np.nanmin(data)
         zeroidx = np.where(np.all(data == vmin, axis=1))[0]
-    
+
+    zeroidx = get_single_empty_lines(zeroidx)
+
     if zeroidx.size!= 0:
-        data[zeroidx,:] = np.nan
-        data[:,zeroidx] = np.nan
+        data[zeroidx,:] = np.inf
+        data[:,zeroidx] = np.inf
         length = np.shape(data)[0]
         diag = data.diagonal(0)
-    
+
         for i in range(0, length):
             diag = data.diagonal(i)
-            nan_idx = np.argwhere(np.isnan(diag))
+            nan_idx = np.argwhere(np.isinf(diag))
             if nan_idx.size != 0:
                 x = np.arange(len(diag))
                 x = np.delete(x, nan_idx)
