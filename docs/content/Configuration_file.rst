@@ -17,6 +17,7 @@ Below, we provide a template of the configutation file required for `optimalTAD`
 	resolution = 20000
 	stepsize = 0.05
 	gamma_max = 4
+	seed = 0
 	hic_format = txt.gz
 	truncation = True
 	log2_hic = True
@@ -64,7 +65,6 @@ Below, we provide a template of the configutation file required for `optimalTAD`
 	tad_linestyle = --
 	filename = output/figures/TADandChIPseq.png
 	dpi = 300
-
 
 
 

@@ -54,6 +54,7 @@ The basic optimalTAD commands are:
         parser.add_argument('--resolution', type = int, default = int(self.cfg['run']['resolution']), help = 'Resolution')
         parser.add_argument('--stepsize', type = float, default = float(self.cfg['run']['stepsize']), help = 'Step size to increment gamma parameter')
         parser.add_argument('--gamma_max', type = float, default = float(self.cfg['run']['gamma_max']), help = 'Max gamma parameter')
+        parser.add_argument('--seed', type = int, default = int(self.cfg['run'].get('seed', 0)), help = 'Random seed used for bootstrap confidence intervals')
         parser.add_argument('--hic_format', type = str, default = self.cfg['run']['hic_format'], help = 'Hi-C matrices input format for armatus')
         parser.add_argument('--empty_row_imputation', action = 'store_true', help = 'Missing rows (and columns) imputation')
         parser.add_argument('--truncation',  action = 'store_true', help = 'Value truncation of input Hi-C-matrix')

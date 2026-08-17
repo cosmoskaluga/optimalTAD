@@ -39,7 +39,7 @@ cd optimalTAD
 ### Usage
 To launch the algorithm type the following at the command line:
 ```bash
-optimalTAD [-h] [--hic HIC [HIC ...]] [--chipseq CHIPSEQ [CHIPSEQ ...]] [--output OUTPUT] [--np NP] [--resolution RESOLUTION] [--stepsize STEPSIZE] [--gamma_max GAMMA_MAX] [--hic_format HIC_FORMAT] [--empty_row_imputation]
+optimalTAD [-h] [--hic HIC [HIC ...]] [--chipseq CHIPSEQ [CHIPSEQ ...]] [--output OUTPUT] [--np NP] [--resolution RESOLUTION] [--stepsize STEPSIZE] [--gamma_max GAMMA_MAX] [--seed SEED] [--hic_format HIC_FORMAT] [--empty_row_imputation]
                   [--truncation] [--log2_hic] [--log2_chip] [--zscore_chip] [--balance | --no-balance] [--mammal] [--window_size_min WINDOW_SIZE_MIN] [--window_size_max WINDOW_SIZE_MAX]
 ```
 
@@ -54,6 +54,7 @@ Required and optional arguments:
     --resolution [RESOLUTION]               Resolution of Hi-C matrices (=1)
     --stepsize [STEPSIZE]                   Step size to increment gamma parameter in Armatus (=0.05)
     --gamma_max [GAMMA_MAX]                 Max value of the gamma parameter (=4)
+    --seed [SEED]                           Random seed used for bootstrap confidence intervals (=0)
     --hic_format [HIC_FORMAT]               Hi-C matrices input format for armatus (=txt.gz)
     --empty_row_imputation                  Empty line imputation (=False)
     --truncation                            Truncation of a Hi-C-matrix (=False)
@@ -67,6 +68,8 @@ Required and optional arguments:
     
 
 All listed arguments can also be specified in the `config.ini` configuration file.
+
+Each run writes `run_manifest.json` to its output directory. The manifest records the effective command-line parameters, complete configuration, package and Python versions, SHA-256 hashes of all Hi-C and ChIP-seq inputs, the bootstrap seed, runtime information, and completion status.
 
 Both Hi-C and ChIP-Seq data are required for `optimalTAD` running. We strongly recommend you perform iterative correction ([Imakaev et al, 2012](https://www.nature.com/articles/nmeth.2148)) on your Hi-C data before running `optimalTAD`. ChIP-seq coverage track should be normalized by input and stored in .bedgraph or .bw file. No further preparation of ChIP-seq data is required, the algorithm will binarize coverage with respect to a chosen resolution of the Hi-C map and provide log2 and z-score transformation if needed.
 

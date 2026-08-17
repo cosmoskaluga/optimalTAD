@@ -7,7 +7,7 @@ To launch the algorithm  type the following at the command line:
 
 	optimalTAD run [-h] [--hic HIC [HIC ...]] [--chipseq CHIPSEQ [CHIPSEQ ...]] 
 			[--np NP] [--resolution RESOLUTION] [--stepsize STEPSIZE] 
-			[--gamma_max GAMMA_MAX] [--hic_format HIC_FORMAT] 
+			[--gamma_max GAMMA_MAX] [--seed SEED] [--hic_format HIC_FORMAT] 
 			[--empty_row_imputation] [--truncation] [--log2_hic] 
 			[--log2_chip] [--zscore_chip]
 
@@ -48,6 +48,11 @@ Step size to increment gamma parameter in Armatus (=0.05)
 Max value of the gamma parameter (=4)
 
 """""""""""""""""""""""""""""""
+``--seed``
+"""""""""""""""""""""""""""""""
+Random seed used for bootstrap confidence intervals (=0)
+
+"""""""""""""""""""""""""""""""
 ``--hic_format``
 """""""""""""""""""""""""""""""
 Hi-C matrices input format for armatus (=txt.gz)
@@ -77,3 +82,4 @@ log2 transformation of ChIP-seq values (=False)
 """""""""""""""""""""""""""""""
 Z-score transformation of ChIP-seq values(=False)
 
+Every run writes a ``run_manifest.json`` file to its output directory. It contains the effective arguments, full configuration, package versions, SHA-256 input hashes, bootstrap seed, runtime information, and completion status.

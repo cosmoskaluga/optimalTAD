@@ -6,6 +6,7 @@ import numpy as np
 import pandas as pd
 import cooler
 
+from .. import manifest
 from . import hicloader, chipseqloader
 from . import tadcaller
 from . import tadnumeration
@@ -23,6 +24,10 @@ def main(args, cfg, log):
     sample_index = 0
 
     args.output = utils.uniquify_path(args.output)
+    seed = getattr(args, 'seed', 0)
+    rng = np.random.default_rng(seed)
+    run_manifest = manifest.create_run_manifest(args, cfg, seed)
+    manifest.write_run_manifest(args.output, run_manifest)
 
     for hic_path, chipseq_path, samplename in zip(hic_files, chipseq_files, samplenames):
         #samplename = os.path.split(hic_path)[1].split('.')[0]
@@ -87,7 +92,8 @@ def main(args, cfg, log):
                                                     index_max = args.index_max,
                                                     acetyl_min = cfg.getint('stair', 'acetyl_min'),
                                                     acetyl_max = cfg.getint('stair', 'acetyl_max'), 
-                                                    mammals = args.mammal)
+                                                    mammals = args.mammal,
+                                                    rng = rng)
             
         #df_sample = pd.DataFrame(amplitudes.items(), columns = ['Gamma', samplename])
         df_sample = pd.DataFrame(list(amplitudes.values()), columns = ['Gamma', 
@@ -135,3 +141,5 @@ def main(args, cfg, log):
                       path_to_stair_dataframe = os.path.join(args.output, '', cfg.get('output', 'path_to_best_stair_data')))
 
     df.to_csv(os.path.join(args.output, '', cfg.get('output', 'path_to_amplitude_file')), float_format='%.5f', header = True, index=False)
+    manifest.mark_completed(run_manifest)
+    manifest.write_run_manifest(args.output, run_manifest)

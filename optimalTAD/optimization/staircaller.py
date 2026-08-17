@@ -10,12 +10,13 @@ def deltaH_statistic(interTAD, TAD, axis=-1):
     return np.median(interTAD, axis=axis) - np.median(TAD, axis=axis)
 
 
-def get_bootstraps(data, statistic):
-    rng = np.random.default_rng()
+def get_bootstraps(data, statistic, rng=None):
+    if rng is None:
+        rng = np.random.default_rng()
     return bootstrap(data, statistic, method='basic', random_state=rng, n_resamples=1000)
 
 
-def get_stairs(index_data, df_chip, index_min = -5, index_max = 5, acetyl_min = -3, acetyl_max = 5, mammals = False):
+def get_stairs(index_data, df_chip, index_min = -5, index_max = 5, acetyl_min = -3, acetyl_max = 5, mammals = False, rng = None):
     """ Calculating the difference in ChIP-seq signal between inter-TAD and TAD regions.
 
         Parameters
@@ -34,6 +35,8 @@ def get_stairs(index_data, df_chip, index_min = -5, index_max = 5, acetyl_min = 
             An upper threshold for a scaled ChIP-seq signal
         ``mammals`` : bool
             Telling the algorithm that the data corresponds to mammalian chromatin
+        ``rng`` : numpy.random.Generator
+            Seeded random number generator used by bootstrap confidence intervals
 
         Returns
         -------
@@ -97,7 +100,7 @@ def get_stairs(index_data, df_chip, index_min = -5, index_max = 5, acetyl_min = 
                 median_val.append(np.nan)
 
         amplitude = deltaH_statistic(interTAD, TAD)
-        res = get_bootstraps((interTAD, TAD), deltaH_statistic)
+        res = get_bootstraps((interTAD, TAD), deltaH_statistic, rng=rng)
         dict_stairs[gamma] = np.array(median_val)
         dict_amplitudes[gamma] = [gamma, amplitude, res.confidence_interval.low, res.confidence_interval.high]
 

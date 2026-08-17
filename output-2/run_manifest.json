@@ -1,0 +1,152 @@
+{
+  "completed_at_utc": "2026-08-17T07:41:22.265783Z",
+  "created_at_utc": "2026-08-17T07:39:29.258375Z",
+  "inputs": {
+    "chipseq": [
+      {
+        "path": "./testdata/fly/LacZ1_2L.bedgraph",
+        "resolved_path": "/Users/dmitriismirnov/CU/optimalTAD/testdata/fly/LacZ1_2L.bedgraph",
+        "sha256": "8b059d7bb2b69bca85f63d64240bc3cea783a2dadb6b53f82f86731251ae1948",
+        "size_bytes": 47279
+      }
+    ],
+    "hic": [
+      {
+        "path": "./testdata/fly/LacZ1_2L.hdf5",
+        "resolved_path": "/Users/dmitriismirnov/CU/optimalTAD/testdata/fly/LacZ1_2L.hdf5",
+        "sha256": "7370e99cf6945a3e6707e17f552133076f2666cf999118ad73be1ec049b271ea",
+        "size_bytes": 10606629
+      }
+    ]
+  },
+  "package_versions": {
+    "bioframe": "0.7.2",
+    "cooler": "0.10.2",
+    "cooltools": "0.7.1",
+    "h5py": "3.12.1",
+    "matplotlib": "3.9.2",
+    "numba": "0.60.0",
+    "numpy": "1.26.4",
+    "optimalTAD": "0.1.0",
+    "pandas": "2.2.3",
+    "pyBigWig": "0.3.23",
+    "scipy": "1.13.1",
+    "seaborn": "0.13.2"
+  },
+  "parameters": {
+    "arguments": {
+      "balance": true,
+      "chipseq": [
+        "./testdata/fly/LacZ1_2L.bedgraph"
+      ],
+      "empty_row_imputation": false,
+      "gamma_max": 4.0,
+      "hic": [
+        "./testdata/fly/LacZ1_2L.hdf5"
+      ],
+      "hic_format": "txt.gz",
+      "index_max": 5,
+      "index_min": -4,
+      "log2_chip": true,
+      "log2_hic": true,
+      "mammal": false,
+      "np": 3,
+      "output": "./output-2",
+      "resolution": 20000,
+      "save_insulation_score": true,
+      "save_normalized_chip": true,
+      "seed": 17,
+      "stepsize": 0.01,
+      "truncation": true,
+      "window_size_max": 400000,
+      "window_size_min": 40000,
+      "zscore_chip": true
+    },
+    "configuration": {
+      "basic": {
+        "mode": "run"
+      },
+      "chromosomes": {
+        "set_chromosomes": "None"
+      },
+      "hic": {
+        "balance": "True",
+        "recommended_size_armatus": "101",
+        "shrinkage_max": "1024",
+        "shrinkage_min": "0.5"
+      },
+      "output": {
+        "figure_dpi": "500",
+        "figure_postfix": "png",
+        "output": "./output",
+        "path_to_amplitude_figure": "figures/StairAmplitude",
+        "path_to_amplitude_file": "amplitudes.csv",
+        "path_to_best_stair_data": "stair.csv",
+        "path_to_best_stair_figure": "figures/BestStairs",
+        "path_to_insulation_score": "insulation_score",
+        "path_to_normalized_chip": "normalized_chips",
+        "path_to_stair_data": "all_stairs.csv"
+      },
+      "run": {
+        "balance": "True",
+        "chipseq": "./testdata/fly/LacZ1_2L.bedgraph",
+        "empty_row_imputation": "False",
+        "gamma_max": "4",
+        "hic": "./testdata/fly/LacZ1_2L.hdf5",
+        "hic_format": "txt.gz",
+        "log2_chip": "True",
+        "log2_hic": "True",
+        "np": "3",
+        "resolution": "20000",
+        "save_insulation_score": "True",
+        "save_normalized_chip": "True",
+        "seed": "0",
+        "stepsize": "0.01",
+        "truncation": "True",
+        "zscore_chip": "True"
+      },
+      "stair": {
+        "acetyl_max": "5",
+        "acetyl_min": "-3",
+        "index_max": "5",
+        "index_min": "-4",
+        "window_size_max": "400000",
+        "window_size_min": "40000"
+      },
+      "visualization": {
+        "chip_text": "H3",
+        "cmap": "coolwarm",
+        "dpi": "300",
+        "filename": "output/figures/TADandChIPseq.png",
+        "fontsize": "12",
+        "hic_text": "Hi-C",
+        "nticks": "5",
+        "path_to_chip": "./testdata/LacZ1_2L.bedgraph",
+        "region": "chr2L:0-6,000,000",
+        "rnaseq": "False",
+        "rnaseq_text": "RNA-Seq",
+        "samplename": "LacZ1_2L",
+        "tad_linestyle": "--",
+        "tad_linewidth": "1.2",
+        "vline_linestyle": "dashed",
+        "vline_linewidth": "1"
+      }
+    }
+  },
+  "runtime": {
+    "command": [
+      "/Users/dmitriismirnov/opt/miniconda3/envs/optimaltad/bin/optimalTAD",
+      "run",
+      "--seed",
+      "17"
+    ],
+    "executable": "/Users/dmitriismirnov/opt/miniconda3/envs/optimaltad/bin/python3.9",
+    "platform": "macOS-14.5-arm64-arm-64bit",
+    "python_implementation": "CPython",
+    "python_version": "3.9.20",
+    "working_directory": "/Users/dmitriismirnov/CU/optimalTAD"
+  },
+  "schema_version": 1,
+  "seed": 17,
+  "status": "completed"
+}

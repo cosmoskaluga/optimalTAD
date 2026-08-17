@@ -133,7 +133,6 @@ log/
 output/
 testoutput/
 testdata/
-tests/
 
 # Armatus
 armatus/build
